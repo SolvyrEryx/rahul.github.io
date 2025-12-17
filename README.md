@@ -117,7 +117,7 @@ This project is open source and available under the MIT License - see the LICENS
 **Anish Vyapari**
 - GitHub: [@solvyreryx](https://github.com/solvyreryx)
 - LinkedIn: [@rahulj7777/](https://www.linkedin.com/in/rahulj7777/)
-- Email: anishvyapari@gmail.com
+- Email: rahuljaiprakashden@gmail.com
 
 ## 🙊 Acknowledgments
 
