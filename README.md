@@ -4,7 +4,7 @@
 
 ## 🌌 Live Demo
 
-**Website**: [solvyreryx.github.io/rahul.github.io](https://solvyreryx.github.io/rahul.github.io/)
+**Website**: [solvyreryx.github.io](https://solvyreryx.github.io)
 
 ## ✨ Features
 
@@ -116,7 +116,7 @@ This project is open source and available under the MIT License - see the LICENS
 
 **Anish Vyapari**
 - GitHub: [@solvyreryx](https://github.com/solvyreryx)
-- LinkedIn: [@anishvyapari](https://linkedin.com/in/anishvyapari)
+- LinkedIn: [@rahulj7777/](https://www.linkedin.com/in/rahulj7777/)
 - Email: anishvyapari@gmail.com
 
 ## 🙊 Acknowledgments
@@ -127,8 +127,8 @@ This project is open source and available under the MIT License - see the LICENS
 
 ---
 
-**Last Updated**: December 17, 2024
+**Last Updated**: December 17, 2025
 
 **Status**: ✅ Live and Operational
 
-Made with ❤️ by Anish Vyapari
+Made with ❤️ by RAHUL JAIPRAKASH
