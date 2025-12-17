@@ -1,4 +1,4 @@
-# 🚀 Cosmic Portfolio - Anish Vyapari
+# 🚀 Cosmic Portfolio 
 
 > A dark, cosmic, and dynamic portfolio website built with glassmorphism design patterns.
 
