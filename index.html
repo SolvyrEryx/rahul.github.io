@@ -1,452 +1,437 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Github, 
-  Linkedin, 
-  Mail, 
-  Shield, 
-  Globe, 
-  Terminal, 
-  ExternalLink, 
-  Brain,
-  Hash,
-  Loader2,
-  Youtube,
-  TrendingUp,
-  Bitcoin,
-  ArrowRight
-} from 'lucide-react';
-import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, onSnapshot } from 'firebase/firestore';
-import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
-
-// --- CONFIGURATION ---
-const GITHUB_USERNAME = "SolvyrEryx"; 
-
-const DEFAULT_PROFILE = {
-  name: "Rahul J",
-  title: "Quant Engineer & AI Researcher",
-  tagline: "Engineering alpha at the event horizon of Web3, AI, and Financial Markets.",
-  about: "I operate where logic meets volatility. A 3rd-semester AI & Data Science engineer, I bridge the gap between academic research (AICCON) and high-frequency trading. I build systems that think—developing forex algorithms that hunt for alpha and neural networks that predict the unpredictable. My strategy is simple: Rigorous backtesting, risk-adjusted returns, and the foresight of a chess engine.",
-  chessElo: "1826",
-  currentRole: "Deploying Alpha Strategies",
-  interests: [
-    { icon: TrendingUp, label: "Algo Trading", desc: "Forex & HFT Strategies" },
-    { icon: Brain, label: "Deep Learning", desc: "Predictive Modeling" },
-    { icon: Bitcoin, label: "Web3 DeFi", desc: "Smart Contract Security" },
-    { icon: Shield, label: "Cybersecurity", desc: "Offensive Security" },
-  ]
-};
-
-// --- FIREBASE SETUP ---
-const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-const app = Object.keys(firebaseConfig).length ? initializeApp(firebaseConfig) : null;
-const auth = app ? getAuth(app) : null;
-const db = app ? getFirestore(app) : null;
-
-// --- UTILS ---
-const useMousePosition = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  useEffect(() => {
-    const updateMousePosition = ev => setMousePosition({ x: ev.clientX, y: ev.clientY });
-    window.addEventListener('mousemove', updateMousePosition);
-    return () => window.removeEventListener('mousemove', updateMousePosition);
-  }, []);
-  return mousePosition;
-};
-
-// --- VISUAL COMPONENTS ---
-
-const GlobalStyles = () => (
-  <style>{`
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes drift {
-      0% { transform: scale(1.1) translate(0, 0); }
-      50% { transform: scale(1.15) translate(-1%, -1%); }
-      100% { transform: scale(1.1) translate(0, 0); }
-    }
-    .animate-fade-in-up {
-      animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-    }
-    .animate-drift {
-      animation: drift 40s ease-in-out infinite;
-    }
-    .delay-100 { animation-delay: 100ms; }
-    .delay-200 { animation-delay: 200ms; }
-    .delay-300 { animation-delay: 300ms; }
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rahul J | Quant Engineer & AI Researcher</title>
     
-    body, a, button { cursor: none; }
+    <!-- 1. Load Tailwind CSS (Styling) -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #050505; }
-    ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: #555; }
-  `}</style>
-);
+    <!-- 2. Tailwind Configuration (Animations & Fonts) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards',
+                        'drift': 'drift 40s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        drift: {
+                            '0%': { transform: 'scale(1.1) translate(0, 0)' },
+                            '50%': { transform: 'scale(1.15) translate(-1%, -1%)' },
+                            '100%': { transform: 'scale(1.1) translate(0, 0)' },
+                        },
+                    }
+                }
+            }
+        }
+    </script>
 
-const NoiseOverlay = () => (
-  <div className="fixed inset-0 pointer-events-none z-[50] opacity-[0.03] mix-blend-overlay">
-    <svg className="w-full h-full">
-      <filter id="noiseFilter">
-        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
-      </filter>
-      <rect width="100%" height="100%" filter="url(#noiseFilter)" />
-    </svg>
-  </div>
-);
+    <!-- 3. Load Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-const SpaceBackground = () => (
-  <div className="fixed inset-0 z-[-10] overflow-hidden bg-[#050505]">
-    <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 via-black to-blue-900/10" />
-    <img 
-      src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2000&auto=format&fit=crop" 
-      alt="Event Horizon" 
-      className="w-full h-full object-cover opacity-60 animate-drift"
-    />
-    <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505]/80" />
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(5,5,5,0.8)_100%)]" />
-  </div>
-);
+    <style>
+        /* Global Settings */
+        body, a, button { cursor: none; }
+        
+        /* Noise Overlay Texture */
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.03;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
 
-const PrecisionCursor = () => {
-  const { x, y } = useMousePosition();
-  const [isHovering, setIsHovering] = useState(false);
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
 
-  useEffect(() => {
-    const handleMouseOver = (e) => {
-      if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a') || e.target.closest('button')) {
-        setIsHovering(true);
-      } else {
-        setIsHovering(false);
-      }
-    };
-    document.addEventListener('mouseover', handleMouseOver);
-    return () => document.removeEventListener('mouseover', handleMouseOver);
-  }, []);
+        /* Custom Cursor Styles */
+        #cursor-dot, #cursor-outline {
+            position: fixed;
+            top: 0; left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+        }
+        #cursor-dot { width: 8px; height: 8px; background: white; transition: width 0.3s, height 0.3s, opacity 0.3s; }
+        #cursor-outline { width: 40px; height: 40px; border: 1px solid white; transition: all 0.15s ease-out; opacity: 0.5; }
+        
+        /* Cursor Hover State */
+        body.hovering #cursor-dot { width: 16px; height: 16px; opacity: 0.5; }
+        body.hovering #cursor-outline { width: 60px; height: 60px; border-color: transparent; background: rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body class="bg-[#050505] text-slate-300 selection:bg-purple-500/30 selection:text-purple-100 overflow-x-hidden">
 
-  return (
-    <div 
-      className="fixed top-0 left-0 pointer-events-none z-[100] mix-blend-difference"
-      style={{ 
-        transform: `translate3d(${x}px, ${y}px, 0)`,
-      }}
-    >
-      <div className={`absolute -translate-x-1/2 -translate-y-1/2 bg-white rounded-full transition-all duration-300 ${isHovering ? 'w-4 h-4 opacity-100' : 'w-2 h-2 opacity-100'}`} />
-      <div className={`absolute -translate-x-1/2 -translate-y-1/2 border border-white rounded-full transition-all duration-500 ease-out ${isHovering ? 'w-12 h-12 opacity-100 scale-100 border-2' : 'w-6 h-6 opacity-30 scale-100'}`} />
+    <!-- Custom Cursor -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-outline"></div>
+
+    <!-- Noise Texture -->
+    <div class="noise-overlay"></div>
+
+    <!-- Space Background -->
+    <div class="fixed inset-0 -z-10 overflow-hidden bg-[#050505]">
+        <!-- Fallback Gradient -->
+        <div class="absolute inset-0 bg-gradient-to-br from-purple-900/10 via-black to-blue-900/10"></div>
+        <!-- Black Hole Image -->
+        <img 
+            src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2000&auto=format&fit=crop" 
+            alt="Event Horizon" 
+            class="w-full h-full object-cover opacity-60 animate-drift"
+        >
+        <!-- Vignette & Depth Gradients -->
+        <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505]/80"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(5,5,5,0.8)_100%)]"></div>
     </div>
-  );
-};
 
-const Nav = () => (
-  <nav className="fixed top-6 left-0 w-full z-40 flex justify-center px-4">
-    <div className="bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] rounded-full px-8 py-4 flex items-center gap-8 shadow-2xl shadow-black/50">
-      <div className="text-purple-400 font-mono text-[10px] tracking-[0.2em] flex items-center gap-2">
-        <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
-        </span>
-        <span className="hidden sm:inline">ONLINE</span>
-      </div>
-      <div className="w-[1px] h-4 bg-white/10" />
-      <div className="flex gap-6 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
-        {['Mission', 'Intel', 'Armory'].map((item) => (
-          <a key={item} href={`#${item.toLowerCase()}`} className="hover:text-white transition-colors hover:scale-105 transform duration-200">
-            {item}
-          </a>
-        ))}
-      </div>
-    </div>
-  </nav>
-);
-
-const SectionHeading = ({ children, number }) => (
-  <div className="mb-16 relative animate-fade-in-up">
-    <h2 className="text-4xl md:text-5xl font-extralight text-white flex items-baseline gap-4">
-      <span className="text-purple-500 font-mono text-xl opacity-60">0{number}</span>
-      <span className="tracking-tight">{children}</span>
-    </h2>
-    <div className="mt-6 w-full h-[1px] bg-gradient-to-r from-purple-500/50 via-transparent to-transparent" />
-  </div>
-);
-
-const GlassCard = ({ children, className = "", hoverEffect = true }) => (
-  <div className={`relative group p-8 bg-white/[0.02] backdrop-blur-2xl border border-white/[0.06] rounded-3xl transition-all duration-500 overflow-hidden ${hoverEffect ? 'hover:bg-white/[0.05] hover:border-purple-500/30 hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(88,28,135,0.2)]' : ''} ${className}`}>
-    {hoverEffect && (
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-    )}
-    <div className="relative z-10">
-      {children}
-    </div>
-  </div>
-);
-
-const StatCard = ({ label, value, icon: Icon, sub, href }) => {
-  const Content = () => (
-    <>
-      <div className="flex items-start justify-between mb-8">
-        <div className="text-gray-500 text-[10px] uppercase tracking-[0.2em] font-bold">{label}</div>
-        <div className="p-3 bg-white/5 rounded-2xl group-hover:bg-purple-500/20 transition-colors">
-          <Icon size={20} className="text-gray-400 group-hover:text-purple-300 transition-colors" />
-        </div>
-      </div>
-      <div className="text-3xl text-white font-light tracking-tight mb-2 font-mono group-hover:text-purple-100 transition-colors truncate">
-        {value}
-      </div>
-      {sub && <div className="text-gray-500 text-xs font-mono">{sub}</div>}
-    </>
-  );
-
-  return href ? (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="block animate-fade-in-up"><GlassCard className="h-full"><Content /></GlassCard></a>
-  ) : (
-    <div className="animate-fade-in-up"><GlassCard className="h-full"><Content /></GlassCard></div>
-  );
-};
-
-const ProjectCard = ({ repo, index }) => (
-  <a 
-    href={repo.html_url} 
-    target="_blank" 
-    rel="noopener noreferrer" 
-    className="block h-full group animate-fade-in-up"
-    style={{ animationDelay: `${index * 100}ms` }}
-  >
-    <GlassCard className="h-full flex flex-col">
-      <div className="flex justify-between items-start mb-6">
-        <div className="p-3 bg-white/5 rounded-2xl text-purple-400 group-hover:text-white group-hover:bg-purple-500/50 transition-all">
-          <Terminal size={20} />
-        </div>
-        <ExternalLink size={16} className="text-gray-600 group-hover:text-white transition-colors" />
-      </div>
-      <h3 className="text-xl text-white font-light mb-3 group-hover:text-purple-300 transition-colors">{repo.name}</h3>
-      <p className="text-gray-400 text-sm leading-relaxed mb-6 flex-grow line-clamp-3">{repo.description || "Classified project data."}</p>
-      <div className="flex items-center gap-4 text-xs font-mono text-gray-500 border-t border-white/5 pt-4">
-        {repo.language && (
-          <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
-            {repo.language}
-          </span>
-        )}
-        <span className="flex items-center gap-1 ml-auto">
-          <Github size={12} />
-          {repo.stargazers_count}
-        </span>
-      </div>
-    </GlassCard>
-  </a>
-);
-
-const MoreReposCard = ({ count, username }) => (
-  <a 
-    href={`https://github.com/${username}?tab=repositories`} 
-    target="_blank" 
-    rel="noopener noreferrer" 
-    className="block h-full group animate-fade-in-up"
-    style={{ animationDelay: '900ms' }}
-  >
-    <GlassCard className="h-full flex flex-col items-center justify-center text-center border-dashed border-white/10 hover:border-purple-500/40">
-      <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:bg-purple-500/20 group-hover:scale-110 transition-all">
-        <ArrowRight size={24} className="text-gray-400 group-hover:text-purple-300" />
-      </div>
-      <h3 className="text-3xl text-white font-light mb-1 group-hover:text-purple-300 transition-colors">+{count}</h3>
-      <p className="text-xs text-gray-500 uppercase tracking-widest font-mono">Repositories</p>
-    </GlassCard>
-  </a>
-);
-
-export default function App() {
-  const [githubData, setGithubData] = useState(null);
-  const [repos, setRepos] = useState([]);
-  const [dynamicProfile, setDynamicProfile] = useState(DEFAULT_PROFILE);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
-
-  // --- 1. FIREBASE AUTH & DATA SYNC ---
-  // Step A: Initialize Auth
-  useEffect(() => {
-    if (!auth) return;
-    
-    // Listen for auth state changes
-    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
-        // If no user, sign in anonymously
-        signInAnonymously(auth).catch((err) => {
-          console.error("Auth Failed:", err);
-        });
-      }
-    });
-
-    return () => unsubscribeAuth();
-  }, []);
-
-  // Step B: Connect to Firestore ONLY when User is ready
-  useEffect(() => {
-    if (!db || !user) return;
-
-    // Use the 'main' document specifically to avoid odd-segment path errors
-    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'profile', 'main');
-    
-    const unsubscribeSnapshot = onSnapshot(docRef, (docSnap) => {
-      if (docSnap.exists()) {
-        setDynamicProfile(prev => ({ ...prev, ...docSnap.data() }));
-      }
-    }, (error) => {
-      // Graceful failure: If permission denied, just log warning and continue with defaults
-      if (error.code === 'permission-denied') {
-        console.warn("Firestore Access Denied: Using default profile data. (Check Firestore Security Rules if you own this project).");
-      } else {
-        console.error("Firestore Sync Error:", error);
-      }
-    });
-
-    return () => unsubscribeSnapshot();
-  }, [user]); // Only run this effect when 'user' state changes
-
-  // --- 2. GITHUB API SYNC ---
-  useEffect(() => {
-    const fetchGithub = async () => {
-      try {
-        setLoading(true);
-        const userRes = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}`);
-        if (userRes.ok) setGithubData(await userRes.json());
-        const repoRes = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=stars&per_page=9`);
-        if (repoRes.ok) setRepos(await repoRes.json());
-      } catch (e) {
-        console.error("GitHub fetch failed:", e);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchGithub();
-  }, []);
-
-  const displayBio = githubData?.bio || dynamicProfile.about;
-  const extraRepos = githubData ? Math.max(0, githubData.public_repos - repos.length) : 0;
-
-  return (
-    <div className="min-h-screen bg-transparent text-slate-300 font-sans selection:bg-purple-500/30 selection:text-purple-100">
-      <GlobalStyles />
-      <PrecisionCursor />
-      <NoiseOverlay />
-      <SpaceBackground />
-      <Nav />
-
-      <section className="min-h-screen flex flex-col justify-center px-6 md:px-12 max-w-7xl mx-auto relative pt-20">
-        <div className="space-y-10 z-10 animate-fade-in-up">
-          <div className="flex items-center gap-4">
-             <div className="h-[1px] w-12 bg-purple-500/50" />
-             <span className="text-purple-400 font-mono text-xs tracking-[0.2em] uppercase">
-               {dynamicProfile.currentRole}
-             </span>
-          </div>
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold text-white tracking-tighter mix-blend-overlay drop-shadow-2xl">
-            {dynamicProfile.name}
-            <span className="text-purple-600 animate-pulse">.</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-purple-100/80 max-w-2xl leading-relaxed font-light mix-blend-screen delay-100">
-            {dynamicProfile.tagline}
-          </p>
-          <div className="flex flex-wrap gap-6 pt-8 delay-200">
-            {[
-              { icon: Github, label: 'GitHub', href: `https://github.com/${GITHUB_USERNAME}` },
-              { icon: Linkedin, label: 'LinkedIn', href: 'https://www.linkedin.com/in/rahulj7777/' },
-              { icon: Mail, label: 'Contact', href: 'mailto:rahuljaiprakasden@gmail.com' }
-            ].map((link) => (
-              <a 
-                key={link.label}
-                href={link.href} 
-                target="_blank" 
-                rel="noreferrer" 
-                className="group flex items-center gap-3 text-sm font-bold uppercase tracking-[0.1em] text-white bg-white/5 hover:bg-white/10 border border-white/5 hover:border-purple-500/30 px-6 py-3 rounded-full backdrop-blur-md transition-all duration-300"
-              >
-                <link.icon size={16} className="text-purple-400 group-hover:text-white transition-colors" />
-                <span className="group-hover:text-purple-200 transition-colors">{link.label}</span>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="mission" className="py-32 px-6 md:px-12 max-w-7xl mx-auto">
-        <SectionHeading number="1">Mission Profile</SectionHeading>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
-          <div className="space-y-8 text-lg text-gray-300 font-light leading-relaxed animate-fade-in-up delay-100">
-            <p className="first-letter:text-5xl first-letter:text-white first-letter:font-bold first-letter:mr-3 float-left">I</p>
-            <p>am an engineer defined by strategy. Whether dissecting market microstructure for Forex algorithms or architecting neural networks, I operate on the principle of <span className="text-white font-medium">calculated risk</span>.</p>
-            <p>{displayBio}</p>
-            <div className="flex gap-4 pt-4">
-               <div className="px-5 py-2 border border-purple-500/20 bg-purple-500/5 backdrop-blur-sm rounded-full text-purple-300 text-xs font-mono">AI_RESEARCH</div>
-               <div className="px-5 py-2 border border-blue-500/20 bg-blue-500/5 backdrop-blur-sm rounded-full text-blue-300 text-xs font-mono">QUANT_FINANCE</div>
-               <div className="px-5 py-2 border border-green-500/20 bg-green-500/5 backdrop-blur-sm rounded-full text-green-300 text-xs font-mono">WEB3_SEC</div>
+    <!-- Floating Navigation (Pill Shape) -->
+    <nav class="fixed top-6 left-0 w-full z-40 flex justify-center px-4 animate-fade-in-up" style="animation-delay: 100ms;">
+        <div class="bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] rounded-full px-8 py-4 flex items-center gap-8 shadow-2xl shadow-black/50">
+            <div class="text-purple-400 font-mono text-[10px] tracking-[0.2em] flex items-center gap-2">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+                </span>
+                <span class="hidden sm:inline">ONLINE</span>
             </div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 animate-fade-in-up delay-200">
-            {dynamicProfile.interests.map((interest, idx) => (
-              <GlassCard key={idx} className="hover:-translate-y-2">
-                <div className="p-3 bg-white/5 w-fit rounded-2xl mb-4 text-purple-400"><interest.icon size={28} /></div>
-                <h4 className="text-white text-lg font-medium mb-2">{interest.label}</h4>
-                <p className="text-sm text-gray-400 font-mono">{interest.desc}</p>
-              </GlassCard>
-            ))}
-          </div>
-        </div>
-      </section>
+            
+            <div class="w-[1px] h-4 bg-white/10"></div>
 
-      <section id="intel" className="py-32 px-6 md:px-12 bg-black/20 backdrop-blur-3xl border-y border-white/5">
-        <div className="max-w-7xl mx-auto">
-          <SectionHeading number="2">Intelligence & Metrics</SectionHeading>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatCard label="Chess Elo" value={dynamicProfile.chessElo} icon={Hash} sub="Strategic Depth" />
-            <StatCard label="Repos" value={githubData ? githubData.public_repos : "--"} icon={Github} sub="Codebase Size" />
-            <StatCard label="Network" value={githubData ? githubData.followers : "--"} icon={Globe} sub="Followers" />
-            <StatCard label="Brand" value="YouTube" icon={Youtube} sub="Scaling & Content" href="https://www.youtube.com/@NotIneffableBeast" />
-          </div>
+            <div class="flex gap-6 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
+                <a href="#mission" class="hover:text-white transition-colors hover:scale-105 transform duration-200">Mission</a>
+                <a href="#intel" class="hover:text-white transition-colors hover:scale-105 transform duration-200">Intel</a>
+                <a href="#armory" class="hover:text-white transition-colors hover:scale-105 transform duration-200">Armory</a>
+            </div>
         </div>
-      </section>
+    </nav>
 
-      <section id="armory" className="py-32 px-6 md:px-12 max-w-7xl mx-auto">
-        <SectionHeading number="3">The Armory</SectionHeading>
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-24 space-y-4">
-            <Loader2 className="animate-spin text-purple-500" size={40} />
-            <div className="text-xs font-mono text-purple-500/50 animate-pulse">DECRYPTING GITHUB DATA...</div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {repos.length > 0 ? (
-              <>
-                {repos.map((repo, idx) => <ProjectCard key={repo.id} repo={repo} index={idx} />)}
-                {extraRepos > 0 && <MoreReposCard count={extraRepos} username={GITHUB_USERNAME} />}
-              </>
-            ) : (
-              <div className="col-span-full text-center py-20 border border-dashed border-white/10 rounded-2xl bg-white/[0.02]">
-                <p className="text-gray-500 mb-2 font-mono">NO SIGNAL DETECTED</p>
-                <p className="text-xs text-gray-700">Check connection parameters.</p>
-              </div>
-            )}
-          </div>
-        )}
-      </section>
+    <!-- Hero Section -->
+    <section class="min-h-screen flex flex-col justify-center px-6 md:px-12 max-w-7xl mx-auto relative pt-20">
+        <div class="space-y-10 z-10 animate-fade-in-up">
+            <div class="flex items-center gap-4">
+                <div class="h-[1px] w-12 bg-purple-500/50"></div>
+                <span id="hero-role" class="text-purple-400 font-mono text-xs tracking-[0.2em] uppercase">
+                    Deploying Alpha Strategies
+                </span>
+            </div>
+            
+            <h1 class="text-6xl md:text-8xl lg:text-9xl font-bold text-white tracking-tighter mix-blend-overlay drop-shadow-2xl">
+                <span>Rahul J</span><span class="text-purple-600 animate-pulse">.</span>
+            </h1>
+            
+            <p class="text-xl md:text-2xl text-purple-100/80 max-w-2xl leading-relaxed font-light mix-blend-screen" style="animation-delay: 100ms;">
+                Engineering alpha at the event horizon of Web3, AI, and Financial Markets.
+            </p>
 
-      <footer className="py-12 border-t border-white/5 bg-black/60 backdrop-blur-xl relative z-10">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="text-center md:text-left">
-            <p className="text-gray-500 text-sm mb-1">&copy; {new Date().getFullYear()} Rahul J.</p>
-            <p className="text-[10px] text-gray-700 font-mono tracking-widest uppercase">System Status: Nominal</p>
-          </div>
-          <div className="flex gap-6">
-             <a href={`https://github.com/${GITHUB_USERNAME}`} className="text-gray-600 hover:text-purple-500 transition-colors"><Github size={18} /></a>
-             <a href="https://www.linkedin.com/in/rahulj7777/" className="text-gray-600 hover:text-purple-500 transition-colors"><Linkedin size={18} /></a>
-             <a href="mailto:rahuljaiprakasden@gmail.com" className="text-gray-600 hover:text-purple-500 transition-colors"><Mail size={18} /></a>
-          </div>
+            <div class="flex flex-wrap gap-6 pt-8" style="animation-delay: 200ms;">
+                <a href="https://github.com/SolvyrEryx" target="_blank" class="group flex items-center gap-3 text-sm font-bold uppercase tracking-[0.1em] text-white bg-white/5 hover:bg-white/10 border border-white/5 hover:border-purple-500/30 px-6 py-3 rounded-full backdrop-blur-md transition-all duration-300">
+                    <i data-lucide="github" class="w-4 h-4 text-purple-400 group-hover:text-white transition-colors"></i>
+                    <span class="group-hover:text-purple-200 transition-colors">GitHub</span>
+                </a>
+                <a href="https://www.linkedin.com/in/rahulj7777/" target="_blank" class="group flex items-center gap-3 text-sm font-bold uppercase tracking-[0.1em] text-white bg-white/5 hover:bg-white/10 border border-white/5 hover:border-purple-500/30 px-6 py-3 rounded-full backdrop-blur-md transition-all duration-300">
+                    <i data-lucide="linkedin" class="w-4 h-4 text-purple-400 group-hover:text-white transition-colors"></i>
+                    <span class="group-hover:text-purple-200 transition-colors">LinkedIn</span>
+                </a>
+                <a href="mailto:rahuljaiprakasden@gmail.com" class="group flex items-center gap-3 text-sm font-bold uppercase tracking-[0.1em] text-white bg-white/5 hover:bg-white/10 border border-white/5 hover:border-purple-500/30 px-6 py-3 rounded-full backdrop-blur-md transition-all duration-300">
+                    <i data-lucide="mail" class="w-4 h-4 text-purple-400 group-hover:text-white transition-colors"></i>
+                    <span class="group-hover:text-purple-200 transition-colors">Contact</span>
+                </a>
+            </div>
         </div>
-      </footer>
-    </div>
-  );
-}
+    </section>
+
+    <!-- Mission Profile Section -->
+    <section id="mission" class="py-32 px-6 md:px-12 max-w-7xl mx-auto">
+        <div class="mb-16 relative">
+            <h2 class="text-4xl md:text-5xl font-extralight text-white flex items-baseline gap-4">
+                <span class="text-purple-500 font-mono text-xl opacity-60">01</span>
+                <span class="tracking-tight">Mission Profile</span>
+            </h2>
+            <div class="mt-6 w-full h-[1px] bg-gradient-to-r from-purple-500/50 via-transparent to-transparent"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20">
+            <div class="space-y-8 text-lg text-gray-300 font-light leading-relaxed">
+                <p>
+                    <span class="text-5xl text-white font-bold float-left mr-3 mt-[-8px]">I</span>
+                    am an engineer defined by strategy. Whether dissecting market microstructure for Forex algorithms or architecting neural networks, I operate on the principle of <span class="text-white font-medium">calculated risk</span>.
+                </p>
+                <p id="about-text">
+                    I operate where logic meets volatility. A 3rd-semester AI & Data Science engineer, I bridge the gap between academic research (AICCON) and high-frequency trading. I build systems that think—developing forex algorithms that hunt for alpha and neural networks that predict the unpredictable. My strategy is simple: Rigorous backtesting, risk-adjusted returns, and the foresight of a chess engine.
+                </p>
+                <div class="flex gap-4 pt-4">
+                    <div class="px-5 py-2 border border-purple-500/20 bg-purple-500/5 backdrop-blur-sm rounded-full text-purple-300 text-xs font-mono">AI_RESEARCH</div>
+                    <div class="px-5 py-2 border border-blue-500/20 bg-blue-500/5 backdrop-blur-sm rounded-full text-blue-300 text-xs font-mono">QUANT_FINANCE</div>
+                    <div class="px-5 py-2 border border-green-500/20 bg-green-500/5 backdrop-blur-sm rounded-full text-green-300 text-xs font-mono">WEB3_SEC</div>
+                </div>
+            </div>
+
+            <!-- Interests Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6" id="interests-grid">
+                <!-- Javascript will populate this -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Intelligence Section -->
+    <section id="intel" class="py-32 px-6 md:px-12 bg-black/20 backdrop-blur-3xl border-y border-white/5">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-16 relative">
+                <h2 class="text-4xl md:text-5xl font-extralight text-white flex items-baseline gap-4">
+                    <span class="text-purple-500 font-mono text-xl opacity-60">02</span>
+                    <span class="tracking-tight">Intelligence & Metrics</span>
+                </h2>
+                <div class="mt-6 w-full h-[1px] bg-gradient-to-r from-purple-500/50 via-transparent to-transparent"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Stat Card: Chess -->
+                <div class="group relative p-8 bg-white/[0.02] backdrop-blur-2xl border border-white/[0.06] rounded-3xl transition-all duration-500 overflow-hidden hover:bg-white/[0.05] hover:border-purple-500/30 hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(88,28,135,0.2)]">
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-start justify-between mb-8">
+                            <div class="text-gray-500 text-[10px] uppercase tracking-[0.2em] font-bold">Chess Elo</div>
+                            <div class="p-3 bg-white/5 rounded-2xl group-hover:bg-purple-500/20 transition-colors">
+                                <i data-lucide="hash" class="w-5 h-5 text-gray-400 group-hover:text-purple-300 transition-colors"></i>
+                            </div>
+                        </div>
+                        <div class="text-3xl text-white font-light tracking-tight mb-2 font-mono group-hover:text-purple-100 transition-colors truncate">1826</div>
+                        <div class="text-gray-500 text-xs font-mono">Strategic Depth</div>
+                    </div>
+                </div>
+                
+                <!-- Stat Card: Repos (Dynamic) -->
+                <div class="group relative p-8 bg-white/[0.02] backdrop-blur-2xl border border-white/[0.06] rounded-3xl transition-all duration-500 overflow-hidden hover:bg-white/[0.05] hover:border-purple-500/30 hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(88,28,135,0.2)]">
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-start justify-between mb-8">
+                            <div class="text-gray-500 text-[10px] uppercase tracking-[0.2em] font-bold">Repos</div>
+                            <div class="p-3 bg-white/5 rounded-2xl group-hover:bg-purple-500/20 transition-colors">
+                                <i data-lucide="github" class="w-5 h-5 text-gray-400 group-hover:text-purple-300 transition-colors"></i>
+                            </div>
+                        </div>
+                        <div id="stat-repos" class="text-3xl text-white font-light tracking-tight mb-2 font-mono group-hover:text-purple-100 transition-colors truncate">--</div>
+                        <div class="text-gray-500 text-xs font-mono">Codebase Size</div>
+                    </div>
+                </div>
+
+                <!-- Stat Card: Followers (Dynamic) -->
+                <div class="group relative p-8 bg-white/[0.02] backdrop-blur-2xl border border-white/[0.06] rounded-3xl transition-all duration-500 overflow-hidden hover:bg-white/[0.05] hover:border-purple-500/30 hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(88,28,135,0.2)]">
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-start justify-between mb-8">
+                            <div class="text-gray-500 text-[10px] uppercase tracking-[0.2em] font-bold">Network</div>
+                            <div class="p-3 bg-white/5 rounded-2xl group-hover:bg-purple-500/20 transition-colors">
+                                <i data-lucide="globe" class="w-5 h-5 text-gray-400 group-hover:text-purple-300 transition-colors"></i>
+                            </div>
+                        </div>
+                        <div id="stat-followers" class="text-3xl text-white font-light tracking-tight mb-2 font-mono group-hover:text-purple-100 transition-colors truncate">--</div>
+                        <div class="text-gray-500 text-xs font-mono">Followers</div>
+                    </div>
+                </div>
+
+                <!-- Stat Card: YouTube -->
+                <a href="https://www.youtube.com/@NotIneffableBeast" target="_blank" class="group relative p-8 bg-white/[0.02] backdrop-blur-2xl border border-white/[0.06] rounded-3xl transition-all duration-500 overflow-hidden hover:bg-white/[0.05] hover:border-purple-500/30 hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(88,28,135,0.2)] block">
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-start justify-between mb-8">
+                            <div class="text-gray-500 text-[10px] uppercase tracking-[0.2em] font-bold">Brand</div>
+                            <div class="p-3 bg-white/5 rounded-2xl group-hover:bg-purple-500/20 transition-colors">
+                                <i data-lucide="youtube" class="w-5 h-5 text-gray-400 group-hover:text-purple-300 transition-colors"></i>
+                            </div>
+                        </div>
+                        <div class="text-3xl text-white font-light tracking-tight mb-2 font-mono group-hover:text-purple-100 transition-colors truncate">YouTube</div>
+                        <div class="text-gray-500 text-xs font-mono">Scaling & Content</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Armory Section -->
+    <section id="armory" class="py-32 px-6 md:px-12 max-w-7xl mx-auto">
+        <div class="mb-16 relative">
+            <h2 class="text-4xl md:text-5xl font-extralight text-white flex items-baseline gap-4">
+                <span class="text-purple-500 font-mono text-xl opacity-60">03</span>
+                <span class="tracking-tight">The Armory</span>
+            </h2>
+            <div class="mt-6 w-full h-[1px] bg-gradient-to-r from-purple-500/50 via-transparent to-transparent"></div>
+        </div>
+
+        <div id="loading-spinner" class="flex flex-col items-center justify-center py-24 space-y-4">
+            <i data-lucide="loader-2" class="w-10 h-10 text-purple-500 animate-spin"></i>
+            <div class="text-xs font-mono text-purple-500/50 animate-pulse">DECRYPTING GITHUB DATA...</div>
+        </div>
+        
+        <div id="repos-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden">
+            <!-- Injected via JS -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-white/5 bg-black/60 backdrop-blur-xl relative z-10">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="text-center md:text-left">
+                <p class="text-gray-500 text-sm mb-1">
+                    &copy; <span id="year"></span> Rahul J.
+                </p>
+                <p class="text-[10px] text-gray-700 font-mono tracking-widest uppercase">
+                    System Status: Nominal
+                </p>
+            </div>
+            
+            <div class="flex gap-6">
+                <a href="https://github.com/SolvyrEryx" class="text-gray-600 hover:text-purple-500 transition-colors"><i data-lucide="github" class="w-5 h-5"></i></a>
+                <a href="https://www.linkedin.com/in/rahulj7777/" class="text-gray-600 hover:text-purple-500 transition-colors"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
+                <a href="mailto:rahuljaiprakasden@gmail.com" class="text-gray-600 hover:text-purple-500 transition-colors"><i data-lucide="mail" class="w-5 h-5"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Logic Script -->
+    <script type="module">
+        // Import Firebase (Modular) - OPTIONAL for GitHub Pages if you just want GitHub Data
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const GITHUB_USERNAME = "SolvyrEryx"; 
+        const INTERESTS = [
+            { icon: 'trending-up', label: "Algo Trading", desc: "Forex & HFT Strategies" },
+            { icon: 'brain', label: "Deep Learning", desc: "Predictive Modeling" },
+            { icon: 'bitcoin', label: "Web3 DeFi", desc: "Smart Contract Security" },
+            { icon: 'shield', label: "Cybersecurity", desc: "Offensive Security" },
+        ];
+
+        // --- 1. Cursor Logic ---
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorOutline = document.getElementById('cursor-outline');
+
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            // Simple follow delay effect
+            cursorOutline.style.left = `${posX}px`;
+            cursorOutline.style.top = `${posY}px`;
+        });
+
+        document.addEventListener('mouseover', (e) => {
+            const target = e.target.closest('a') || e.target.closest('button');
+            if (target) {
+                document.body.classList.add('hovering');
+            } else {
+                document.body.classList.remove('hovering');
+            }
+        });
+
+        // --- 2. Render Interests ---
+        const interestsGrid = document.getElementById('interests-grid');
+        INTERESTS.forEach(interest => {
+            const div = document.createElement('div');
+            div.className = "group relative p-8 bg-white/[0.02] backdrop-blur-2xl border border-white/[0.06] rounded-3xl transition-all duration-500 overflow-hidden hover:bg-white/[0.05] hover:border-purple-500/30 hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(88,28,135,0.2)]";
+            div.innerHTML = `
+                <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div class="relative z-10">
+                    <div class="p-3 bg-white/5 w-fit rounded-2xl mb-4 text-purple-400 group-hover:bg-purple-500/20 transition-colors">
+                        <i data-lucide="${interest.icon}" class="w-7 h-7"></i>
+                    </div>
+                    <h4 class="text-white text-lg font-medium mb-2">${interest.label}</h4>
+                    <p class="text-sm text-gray-400 font-mono">${interest.desc}</p>
+                </div>
+            `;
+            interestsGrid.appendChild(div);
+        });
+
+        // --- 3. Fetch GitHub Data ---
+        async function fetchGitHub() {
+            try {
+                // User Data
+                const userRes = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}`);
+                if (userRes.ok) {
+                    const userData = await userRes.json();
+                    document.getElementById('stat-repos').textContent = userData.public_repos;
+                    document.getElementById('stat-followers').textContent = userData.followers;
+                    if (userData.bio) document.getElementById('about-text').textContent = userData.bio;
+                }
+
+                // Repos Data
+                const repoRes = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=stars&per_page=9`);
+                if (repoRes.ok) {
+                    const repos = await repoRes.json();
+                    renderRepos(repos);
+                }
+            } catch (e) {
+                console.error("GitHub Error:", e);
+                document.getElementById('loading-spinner').innerHTML = `<p class='text-red-500 font-mono'>CONNECTION FAILED</p>`;
+            }
+        }
+
+        function renderRepos(repos) {
+            const container = document.getElementById('repos-grid');
+            const spinner = document.getElementById('loading-spinner');
+            
+            spinner.classList.add('hidden');
+            container.classList.remove('hidden');
+
+            repos.forEach((repo, index) => {
+                const a = document.createElement('a');
+                a.href = repo.html_url;
+                a.target = "_blank";
+                a.className = "block h-full group animate-fade-in-up";
+                a.style.animationDelay = `${index * 100}ms`;
+                a.innerHTML = `
+                    <div class="relative group p-8 bg-white/[0.02] backdrop-blur-2xl border border-white/[0.06] rounded-3xl transition-all duration-500 overflow-hidden hover:bg-white/[0.05] hover:border-purple-500/30 hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(88,28,135,0.2)] h-full flex flex-col">
+                        <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="relative z-10 flex flex-col h-full">
+                            <div class="flex justify-between items-start mb-6">
+                                <div class="p-3 bg-white/5 rounded-2xl text-purple-400 group-hover:text-white group-hover:bg-purple-500/50 transition-all">
+                                    <i data-lucide="terminal" class="w-5 h-5"></i>
+                                </div>
+                                <i data-lucide="external-link" class="w-4 h-4 text-gray-600 group-hover:text-white transition-colors"></i>
+                            </div>
+                            
+                            <h3 class="text-xl text-white font-light mb-3 group-hover:text-purple-300 transition-colors">${repo.name}</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed mb-6 flex-grow line-clamp-3">${repo.description || "Classified project data."}</p>
+
+                            <div class="flex items-center gap-4 text-xs font-mono text-gray-500 border-t border-white/5 pt-4">
+                                ${repo.language ? `<span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>${repo.language}</span>` : ''}
+                                <span class="flex items-center gap-1 ml-auto"><i data-lucide="github" class="w-3 h-3"></i> ${repo.stargazers_count}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(a);
+            });
+            lucide.createIcons(); // Refresh icons
+        }
+
+        // --- 4. Init ---
+        document.getElementById('year').textContent = new Date().getFullYear();
+        lucide.createIcons();
+        fetchGitHub();
+    </script>
+</body>
+</html>
