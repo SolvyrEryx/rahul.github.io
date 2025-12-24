@@ -1,102 +1,153 @@
-# 🚀 Cosmic Portfolio 
+# 🎯 Anish Vyapari - Personal Portfolio
 
-> A dark, cosmic, and dynamic portfolio website built with glassmorphism design patterns.
+> A cosmic, AI-powered portfolio website showcasing AI/ML projects, Discord bot development, and full-stack engineering expertise.
 
-## 🌌 Live Demo
+**Live Demo:** [solvyreryx.github.io](https://solvyreryx.github.io)
 
-**Website**: [solvyreryx.github.io](https://solvyreryx.github.io)
+## 🚀 About
+
+I'm a 2nd-year Computer Science student at RAIT/DYPatil College (AI & ML specialization) based in Mumbai, passionate about AI/ML, full-stack development, and strategic problem-solving. This interactive portfolio demonstrates my technical skills through an immersive, desktop-like interface.
+
+**Current Focus:**
+- 🤖 AI/ML Model Integration (Mistral, Google Gemini APIs)
+- 🔗 Discord.py Bot Development
+- 💻 Full-Stack Web Development
+- ☁️ Cloud Deployment (Railway, GitHub Pages)
+- ♟️ Chess Strategy (Elo: 1826)
+- 📋 AICCONS 2026 Research Paper Reviewer
 
 ## ✨ Features
 
-- **Glassmorphism UI**: Modern glass effect cards with blur and transparency
-- **Dark Space Theme**: Beautiful cosmic background with black hole aesthetic
-- **Smooth Animations**: Fade-in effects, drift animations, and hover interactions
-- **Responsive Design**: Fully responsive on mobile, tablet, and desktop
-- **Single HTML File**: No build process needed - just pure HTML, CSS, and TailwindCSS
-- **Performance Optimized**: Lightweight and fast loading
+- **Glassmorphism Design** - Modern glass-effect cards with backdrop blur effects
+- **Dark Space Theme** - Sleek dark interface with cosmic aesthetic
+- **Interactive Apps** - Multiple desktop-style applications:
+  - 💬 **NeuralBot (AI Chat)** - Powered by Mistral API with image generation
+  - 🔧 **VS Code IDE** - Interactive code editor with Python syntax highlighting
+  - 💻 **Terminal** - Functional command-line interface
+  - 📊 **System Monitor** - Real-time performance graphs
+  - 📁 **File Explorer** - Browse local file system
+  - 🌐 **Browser** - Integrated web browser with GitHub & Discord integration
+- **Smooth Animations** - Fade-in effects, drift animations, hover interactions
+- **Responsive Design** - Fully responsive on mobile, tablet, and desktop
+- **Single HTML File** - No build process needed - just pure HTML, CSS, and JavaScript
+- **Performance Optimized** - Lightweight and fast loading
+- **Chess.com Integration** - Live stats display
+- **GitHub Integration** - Dynamic repository showcase
+- **Discord Presence** - Live status via Lanyard API
 
-## 📚 Tech Stack
+## 🛠️ Tech Stack
 
-- **HTML5** - Semantic markup
-- **CSS3** - Custom animations and styles
-- **TailwindCSS** - Utility-first CSS framework
-- **JavaScript** - Vanilla JS for interactions
-- **Unsplash API** - Dynamic space background images
+- **Frontend:** HTML5, CSS3, Vanilla JavaScript
+- **Styling:** TailwindCSS, Custom CSS Animations
+- **APIs & Integration:**
+  - Mistral AI API (Neural Chat)
+  - Chess.com API (Rating Stats)
+  - GitHub API (Repository Showcase)
+  - Discord Lanyard API (Status)
+  - Pollinations.ai (Image Generation)
+  - Unsplash API (Background Images)
+- **Fonts:** JetBrains Mono, Inter, FontAwesome Icons
 
-## 🎯 Design Highlights
+## 🎯 Key Features Deep Dive
 
-### Floating Navigation
-A beautiful fixed navigation bar that floats above the content with glassmorphism effect.
+### Desktop-Style Interface
+- Draggable windows with minimize/maximize/close controls
+- Taskbar with app shortcuts
+- Start menu for quick access
+- Notification system
 
-### Hero Section
-Large, bold typography with gradient text and animated action buttons.
+### AI Chat (NeuralBot)
+- Conversational AI powered by Mistral API
+- Text-to-image generation using `generate image <prompt>` command
+- Context-aware responses about portfolio and projects
 
-### Mission Profile
-Detailed information about skills and expertise with glassmorphism cards.
+### Code Editor (VS Code)
+- Syntax highlighting for Python
+- File switching (forex_algo.py, neural_net.py, bio.md, etc.)
+- Line numbers and status bar
+- Editable content with real-time updates
 
-### Intelligence & Metrics
-Stats and metrics displayed in a grid layout with smooth animations.
+### Browser Hub
+- Tools Hub with curated links
+- Chess.com profile integration
+- GitHub profile showcase
+- Discord status display
 
-### The Armory
-Showcase of featured projects with hover effects and direct GitHub links.
-
-## 🙾 Getting Started
+## 📖 Getting Started
 
 ### Quick Start
-1. Clone the repository:
+
+1. **Clone the repository:**
    ```bash
-   git clone https://github.com/solvyreryx/rahul.github.io.git
-   cd rahul.github.io
+   git clone https://github.com/SolvyrEryx/solvyreryx.github.io.git
+   cd solvyreryx.github.io
    ```
 
-2. Open `index.html` in your browser:
-   ```bash
-   # On macOS
-   open index.html
-   
-   # On Linux
-   xdg-open index.html
-   
-   # On Windows
-   start index.html
-   ```
+2. **Open in browser:**
+   - Double-click `index.html` or
+   - Use a local server:
+     ```bash
+     python -m http.server 8000
+     # or
+     npx serve
+     ```
+   - Visit `http://localhost:8000`
 
 ### Customization
 
 Edit the `index.html` file to customize:
 
-- **Name & Title**: Update the name and professional title in the hero section
-- **Links**: Replace GitHub, LinkedIn, and email links with your own
-- **Projects**: Modify the project cards in "The Armory" section
-- **Colors**: Adjust the color scheme by modifying Tailwind color classes
-- **Background**: Change the Unsplash image URL in the `.space-bg` class
+- **Name & Title:** Update the name and professional title in the hero section
+- **Links:** Replace GitHub, LinkedIn, and email links with your own
+- **Projects:** Modify the project cards in the file system
+- **Colors:** Adjust CSS variables in the `:root` selector
+- **Background:** Change the Unsplash image URL
+- **API Keys:** Add your own Mistral API key (currently requires setup)
 
-## 📄 File Structure
+## 🔧 Configuration
+
+To enable the AI Chat feature:
+
+1. Get a Mistral API key from [mistral.ai](https://mistral.ai)
+2. Add it to the JavaScript configuration in `index.html`
+3. For image generation, no API key is needed (uses Pollinations.ai)
+
+## 📁 File Structure
 
 ```
-rahul.github.io/
-├─ index.html       # Main portfolio file (221 lines)
-└─ README.md        # This file
+solvyreryx.github.io/
+├── index.html          # Main portfolio file (1042 lines)
+├── README.md          # Project documentation
+└── LICENSE            # MIT License
 ```
 
-## 🌟 Deployment
+## 🚀 Deployment
 
 This project is hosted on **GitHub Pages**. Any changes pushed to the `main` branch will automatically deploy.
 
 ### Steps to Deploy Your Fork:
 
 1. Fork this repository
-2. Go to Settings → Pages
-3. Select "Deploy from a branch"
-4. Choose "main" branch and "/ (root)" folder
-5. Your site will be available at `https://yourusername.github.io/rahul.github.io/`
+2. Rename it to `yourusername.github.io`
+3. Go to **Settings → Pages**
+4. Select "Deploy from a branch"
+5. Choose "main" branch and "/ (root)" folder
+6. Your site will be available at `https://yourusername.github.io`
 
-## 🎈 Browser Support
+## 🌐 Browser Support
 
 - ✅ Chrome/Edge (Latest)
 - ✅ Firefox (Latest)
 - ✅ Safari (Latest)
-- ✅ Mobile browsers
+- ✅ Mobile Browsers
+
+## 🎨 Design Credits
+
+- **Glassmorphism Design** - Modern UI trend
+- **Dark Theme** - GitHub Dark Mode inspired
+- **Color Palette** - GitHub's native colors + custom accents
+- **Icons** - FontAwesome 6.4.0
+- **Fonts** - JetBrains Mono & Inter from Google Fonts
 
 ## 💫 Contributing
 
@@ -108,27 +159,31 @@ Found a bug or want to improve the design? Feel free to:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📀 License
+## 📄 License
 
-This project is open source and available under the MIT License - see the LICENSE file for details.
+This project is open source and available under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙋 Author
 
 **Anish Vyapari**
-- GitHub: [@solvyreryx](https://github.com/solvyreryx)
-- LinkedIn: [@rahulj7777/](https://www.linkedin.com/in/rahulj7777/)
-- Email: rahuljaiprakashden@gmail.com
+
+- **GitHub:** [@solvyreryx](https://github.com/solvyreryx)
+- **LinkedIn:** [@anish-vyapari](https://linkedin.com/in/anish-vyapari/)
+- **Email:** [contact@example.com](mailto:contact@example.com)
 
 ## 🙊 Acknowledgments
 
-- [TailwindCSS](https://tailwindcss.com) - For the amazing utility-first CSS framework
-- [Unsplash](https://unsplash.com) - For beautiful free images
+- **TailwindCSS** - For the amazing utility-first CSS framework
+- **FontAwesome** - For beautiful icons
+- **Mistral AI** - For the powerful API
+- **Chess.com & Lanyard** - For the integration APIs
+- **GitHub Pages** - For free hosting
 - Design inspiration from modern glassmorphism trends
 
 ---
 
-**Last Updated**: December 17, 2025
+**Last Updated:** December 24, 2025
 
-**Status**: ✅ Live and Operational
+**Status:** ✅ Live and Operational
 
-Made with ❤️ by RAHUL JAIPRAKASH
+**Made with ❤️ by Anish Vyapari**
