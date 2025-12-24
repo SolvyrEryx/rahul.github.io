@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StratOS | Rahul J</title>
+    <!-- Custom Favicon: Electric Cyan Microchip -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20x%3D%2216%22%20y%3D%2216%22%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%224%22%20fill%3D%22%230d1117%22%20stroke%3D%22%2300f3ff%22%20stroke-width%3D%224%22%2F%3E%3Cpath%20d%3D%22M32%2016V8%20M32%2048V56%20M16%2032H8%20M48%2032H56%20M24%2016V8%20M40%2016V8%20M24%2048V56%20M40%2048V56%20M16%2024H8%20M48%2024H56%20M16%2040H8%20M48%2040H56%22%20stroke%3D%22%2300f3ff%22%20stroke-width%3D%224%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Fonts -->
@@ -11,13 +13,13 @@
     <style>
         :root {
             --bg-color: #0d1117;
-            --window-bg: rgba(13, 17, 23, 0.90);
-            --taskbar-bg: rgba(13, 17, 23, 0.85);
+            --window-bg: rgba(13, 17, 23, 0.85); /* Slightly more transparent for aesthetic bg */
+            --taskbar-bg: rgba(13, 17, 23, 0.75);
             --text-color: #e6edf3;
             --accent-color: #00f3ff;
             --accent-green: #0aff60;
             --accent-red: #ff2a6d;
-            --glass-border: 1px solid rgba(0, 243, 255, 0.15);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
             --discord-bg: #111214;
             --discord-card: #232428;
             --discord-blurple: #5865F2;
@@ -34,45 +36,50 @@
             padding: 0;
             overflow: hidden;
             font-family: 'Inter', sans-serif;
-            background: url('https://images.unsplash.com/photo-1576211572290-5c8a33e567dd?q=80&w=1632&auto=format&fit=crop') no-repeat center center fixed;
+            /* Aesthetic Abstract Background */
+            background: url('https://images.unsplash.com/photo-1620121692029-d088224ddc74?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center fixed;
             background-size: cover;
             color: var(--text-color);
             height: 100vh;
             user-select: none;
         }
 
-        /* --- Scrollbar Styling --- */
-        ::-webkit-scrollbar { width: 6px; }
+        /* Subtle Vignette Overlay */
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,0.4) 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #424242; border-radius: 3px; border: 1px solid rgba(255,255,255,0.1); }
+        ::-webkit-scrollbar-thumb { background: #424242; border-radius: 5px; border: 1px solid rgba(255,255,255,0.1); }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }
 
-        /* --- Boot Screen --- */
         #boot-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; color: var(--accent-color); font-family: 'JetBrains Mono', monospace;
             z-index: 9999; display: flex; flex-direction: column;
             justify-content: center; align-items: center; font-size: 14px;
         }
-        #boot-logo { font-size: 64px; margin-bottom: 20px; text-shadow: 0 0 20px var(--accent-color); animation: flicker 2s infinite; }
+        #boot-logo { font-size: 64px; margin-bottom: 30px; text-shadow: 0 0 20px var(--accent-color); animation: flicker 2s infinite; }
+        #boot-log { width: 320px; text-align: left; font-size: 13px; display: flex; flex-direction: column; gap: 4px; }
+        .log-line { opacity: 0; animation: fadeIn 0.1s forwards; white-space: nowrap; overflow: hidden; }
+        
+        @keyframes fadeIn { to { opacity: 1; } }
         @keyframes flicker { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
 
-        /* --- Image Modal --- */
         #image-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); z-index: 20000;
             justify-content: center; align-items: center; backdrop-filter: blur(10px);
-            animation: fadeIn 0.2s ease-out;
         }
         #modal-img { max-width: 90%; max-height: 90%; border-radius: 4px; box-shadow: 0 0 40px rgba(0,243,255,0.3); border: 1px solid var(--accent-color); }
-        #modal-close {
-            position: absolute; top: 20px; right: 30px; font-size: 40px; color: white; cursor: pointer;
-            z-index: 20001; transition: transform 0.2s;
-        }
-        #modal-close:hover { transform: scale(1.1); color: var(--accent-red); }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        #modal-close { position: absolute; top: 20px; right: 30px; font-size: 40px; color: white; cursor: pointer; z-index: 20001; }
 
-        /* --- Notification System --- */
         #notification-area {
             position: absolute; top: 20px; right: 20px; z-index: 10000;
             display: flex; flex-direction: column; gap: 10px; pointer-events: none;
@@ -89,7 +96,6 @@
         @keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes fadeOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(20px); } }
 
-        /* --- Desktop --- */
         #desktop {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             padding: 30px; display: flex; flex-direction: column; flex-wrap: wrap;
@@ -105,13 +111,12 @@
         .desktop-icon i { font-size: 42px; margin-bottom: 10px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7)); }
         .desktop-icon span { font-size: 13px; text-align: center; font-weight: 500; line-height: 1.2; }
 
-        /* --- Windows --- */
         .window {
             position: absolute; background: var(--window-bg); backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px); border: var(--glass-border); border-radius: 12px;
+            border: var(--glass-border); border-radius: 12px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8); display: flex; flex-direction: column;
             overflow: hidden; min-width: 200px; min-height: 100px;
-            transition: opacity 0.2s, transform 0.2s; animation: openWin 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 0.2s, transform 0.2s; animation: openWin 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 10;
         }
         @keyframes openWin { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         .window.minimized { opacity: 0; transform: scale(0.8) translateY(200px); pointer-events: none; }
@@ -124,42 +129,32 @@
         .window-title { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.95); }
         .window-controls { display: flex; gap: 8px; }
         .control-btn { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; position: relative; }
-        .control-btn:hover { filter: brightness(1.2); }
         .close-btn { background: #ff5f56; }
         .min-btn { background: #ffbd2e; }
         .max-btn { background: #27c93f; }
         .window-content { flex-grow: 1; overflow: hidden; position: relative; display: flex; flex-direction: column; }
 
-        /* --- App Styles --- */
         .terminal-app { background-color: #050505; color: #ccc; font-family: 'JetBrains Mono', monospace; height: 100%; padding: 8px; box-sizing: border-box; font-size: 14px; display: flex; flex-direction: column; }
         .terminal-scroll { flex-grow: 1; overflow-y: auto; padding: 10px; }
-        .term-line { margin-bottom: 3px; line-height: 1.5; word-wrap: break-word; }
+        .term-line { margin-bottom: 3px; line-height: 1.5; }
         .term-input-line { display: flex; margin-top: 5px; align-items: center; }
         .prompt-user { color: var(--accent-green); font-weight: bold; }
-        .term-input { background: transparent; border: none; color: #fff; font-family: inherit; font-size: inherit; flex-grow: 1; outline: none; caret-color: var(--accent-color); }
+        .term-input { background: transparent; border: none; color: #fff; font-family: inherit; font-size: inherit; flex-grow: 1; outline: none; }
 
-        /* Chat Bot */
-        .chat-app { display: flex; flex-direction: column; height: 100%; background: var(--chat-bg); font-family: 'Inter', sans-serif; }
+        .chat-app { display: flex; flex-direction: column; height: 100%; background: var(--chat-bg); }
         .chat-messages { flex-grow: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
         .chat-input-area { padding: 15px; background: rgba(0,0,0,0.2); border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; }
-        .chat-input { flex-grow: 1; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; outline: none; font-family: inherit; }
+        .chat-input { flex-grow: 1; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; outline: none; }
         .chat-btn { background: var(--accent-color); color: #000; border: none; padding: 0 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .chat-bubble { max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 14px; line-height: 1.5; word-wrap: break-word; position: relative; animation: popIn 0.2s; }
-        .chat-bubble.user { align-self: flex-end; background: var(--chat-bubble-user); color: white; border-bottom-right-radius: 2px; }
-        .chat-bubble.bot { align-self: flex-start; background: var(--chat-bubble-bot); color: #e6edf3; border-bottom-left-radius: 2px; border: 1px solid #30363d; }
-        .chat-image { max-width: 100%; border-radius: 8px; margin-top: 5px; cursor: pointer; border: 2px solid var(--accent-color); }
+        .chat-bubble { max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 14px; word-wrap: break-word; }
+        .chat-bubble.user { align-self: flex-end; background: var(--chat-bubble-user); color: white; }
+        .chat-bubble.bot { align-self: flex-start; background: var(--chat-bubble-bot); color: #e6edf3; border: 1px solid #30363d; }
         
-        /* Browser */
-        .browser-app { display: flex; flex-direction: column; height: 100%; background: #1a1a1a; color: #fff; width: 100%; }
-        .browser-bar { background: rgba(30, 30, 30, 0.9); padding: 10px 15px; display: flex; gap: 12px; border-bottom: 1px solid #333; align-items: center; backdrop-filter: blur(10px); }
-        .browser-nav { color: #888; cursor: pointer; padding: 6px; border-radius: 50%; transition: all 0.2s; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; }
-        .browser-nav:hover { background: rgba(255,255,255,0.1); color: #fff; }
-        .url-bar { flex-grow: 1; background: #0d0d0d; border: 1px solid #333; padding: 8px 16px; border-radius: 8px; font-size: 13px; color: #eee; display: flex; align-items: center; transition: border 0.2s; font-family: 'JetBrains Mono', monospace; }
-        .url-bar:focus-within { border-color: var(--accent-color); }
-        .browser-content { flex-grow: 1; background: #fff; position: relative; overflow: hidden; display: flex; flex-direction: column; width: 100%; }
-        .browser-content iframe { width: 100%; height: 100%; border: none; display: block; }
-        
-        /* Browser Home & Hubs - Spacing Fixes */
+        .browser-app { display: flex; flex-direction: column; height: 100%; background: #1a1a1a; }
+        .browser-bar { background: rgba(30, 30, 30, 0.9); padding: 10px 15px; display: flex; gap: 12px; border-bottom: 1px solid #333; align-items: center; }
+        .url-bar { flex-grow: 1; background: #0d0d0d; border: 1px solid #333; padding: 8px 16px; border-radius: 8px; font-size: 13px; color: #eee; font-family: 'JetBrains Mono', monospace; }
+        .browser-content { flex-grow: 1; background: #fff; position: relative; overflow: hidden; }
+        /* Browser Home Styles */
         .browser-home { 
             width: 100%; height: 100%; 
             background: #0d1117; 
@@ -232,185 +227,402 @@
         .discord-bio { font-size: 14px; color: #dbdee1; white-space: pre-wrap; line-height: 1.4; margin-bottom: 20px; }
         .discord-activity-card { background: #111214; border-radius: 8px; padding: 12px; display: flex; gap: 12px; align-items: center; margin-top: 10px; }
 
-        /* VS Code */
-        .vscode-layout { display: flex; height: 100%; background: var(--vscode-bg); color: #ccc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .vscode-activity-bar { width: 48px; background: var(--vscode-activity); display: flex; flex-direction: column; align-items: center; padding-top: 10px; user-select: none; }
-        .vscode-icon { font-size: 24px; color: #858585; margin-bottom: 25px; cursor: pointer; border-left: 2px solid transparent; padding-left: 10px; width: 100%; box-sizing: border-box; }
-        .vscode-icon:hover, .vscode-icon.active { color: #fff; border-left: 2px solid #fff; }
-        .vscode-sidebar { width: 200px; background: var(--vscode-sidebar); font-size: 13px; display: flex; flex-direction: column; border-right: 1px solid #1e1e1e; user-select: none; }
-        .vscode-sidebar-header { padding: 10px 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; color: #bbbbbb; display: flex; align-items: center; justify-content: space-between; }
-        .vscode-file { padding: 4px 20px; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #cccccc; }
-        .vscode-file:hover { background: #2a2d2e; }
-        .vscode-file.active { background: #37373d; color: #fff; }
+        .vscode-layout { display: flex; height: 100%; background: var(--vscode-bg); color: #ccc; }
+        .vscode-activity-bar { width: 48px; background: var(--vscode-activity); display: flex; flex-direction: column; align-items: center; padding-top: 10px; }
+        .vscode-icon { font-size: 24px; color: #858585; margin-bottom: 25px; cursor: pointer; }
+        .vscode-sidebar { width: 200px; background: var(--vscode-sidebar); font-size: 13px; border-right: 1px solid #1e1e1e; }
+        .vscode-file { padding: 4px 20px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; }
+        .vscode-file.active { background: #37373d; color: #fff; border-left: 2px solid var(--accent-color); }
         .vscode-main { flex-grow: 1; display: flex; flex-direction: column; }
-        .vscode-tabs { display: flex; background: var(--vscode-sidebar); overflow-x: auto; user-select: none; }
-        .vscode-tab { padding: 8px 15px; background: var(--vscode-tab-inactive); color: #969696; font-size: 13px; display: flex; align-items: center; gap: 8px; border-right: 1px solid #1e1e1e; cursor: pointer; min-width: 120px; }
-        .vscode-tab.active { background: var(--vscode-bg); color: #fff; border-top: 1px solid #58a6ff; }
-        .vscode-editor-area { flex-grow: 1; background: var(--vscode-bg); display: flex; overflow: hidden; position: relative; }
-        .vscode-gutter { width: 50px; background: var(--vscode-bg); color: #858585; text-align: right; padding-right: 15px; padding-top: 10px; font-family: 'Consolas', monospace; font-size: 14px; line-height: 20px; user-select: none; }
-        .vscode-code { flex-grow: 1; padding: 10px; color: #d4d4d4; font-family: 'Consolas', monospace; font-size: 14px; line-height: 20px; white-space: pre; overflow: auto; outline: none; cursor: text; user-select: text; -webkit-user-select: text; }
-        .vscode-status-bar { height: 22px; background: var(--accent-color); color: #000; font-weight: bold; display: flex; align-items: center; padding: 0 10px; font-size: 12px; justify-content: space-between; user-select: none; }
-        .token-keyword { color: #569cd6; font-weight: bold; }
-        .token-string { color: #ce9178; }
-        .token-comment { color: #6a9955; }
-        .token-class { color: #4ec9b0; }
-        .token-function { color: #dcdcaa; }
-        .token-number { color: #b5cea8; }
+        .vscode-tabs { display: flex; background: var(--vscode-sidebar); }
+        .vscode-tab { padding: 8px 15px; background: var(--vscode-sidebar); color: #969696; font-size: 13px; border-right: 1px solid #1e1e1e; }
+        .vscode-tab.active { background: var(--vscode-bg); color: #fff; border-top: 1px solid var(--accent-color); }
+        .vscode-editor-area { flex-grow: 1; display: flex; }
+        .vscode-gutter { width: 50px; text-align: right; padding-right: 15px; padding-top: 10px; font-family: 'Consolas', monospace; font-size: 14px; color: #858585; border-right: 1px solid rgba(255,255,255,0.05); }
+        .vscode-code { flex-grow: 1; padding: 10px; font-family: 'Consolas', monospace; font-size: 14px; white-space: pre; overflow: auto; outline: none; }
+        .vscode-status-bar { height: 22px; background: var(--accent-color); color: #000; display: flex; align-items: center; padding: 0 10px; font-size: 12px; font-weight: bold; }
 
-        /* SysMon - Enhanced */
-        .sysmon-app { padding: 20px; height: 100%; box-sizing: border-box; font-family: 'JetBrains Mono', monospace; overflow-y: auto; color: #e6edf3; background: #080a10; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-content: flex-start; }
-        .sys-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
-        .sys-title { font-size: 12px; color: var(--accent-color); text-transform: uppercase; margin-bottom: 10px; font-weight: bold; border-bottom: 1px solid #333; padding-bottom: 5px; }
-        .sys-graph-container { height: 100px; background: #0d1117; border: 1px solid #333; position: relative; overflow: hidden; margin-bottom: 10px; border-radius: 4px; }
-        .sys-graph-canvas { width: 100%; height: 100%; display: block; }
-        .sys-stats-row { display: flex; justify-content: space-between; font-size: 20px; font-weight: bold; align-items: flex-end; margin-top: 5px; }
-        .sys-stats-label { font-size: 11px; color: #888; font-weight: normal; }
-        .full-width { grid-column: span 2; }
-
-        /* File Explorer */
-        .explorer-app { height: 100%; display: flex; flex-direction: column; }
-        .explorer-bar { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px; color: #8b949e; background: rgba(0,0,0,0.2); }
-        .file-grid { padding: 15px; display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; overflow-y: auto; }
-        .file-item { display: flex; flex-direction: column; align-items: center; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.1s; }
-        .file-item:hover { background: rgba(255,255,255,0.1); }
-        .file-item i { font-size: 32px; margin-bottom: 8px; }
-        
-        /* Taskbar */
-        #taskbar { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; height: 52px; background: var(--taskbar-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: var(--glass-border); border-radius: 14px; display: flex; align-items: center; padding: 0 10px; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        #start-btn { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #2ea043, #238636); color: white; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; margin-right: 15px; margin-left: 5px; transition: transform 0.2s; box-shadow: 0 4px 12px rgba(46, 160, 67, 0.4); }
-        #start-btn:hover { transform: scale(1.05); }
+        #taskbar { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; height: 52px; background: var(--taskbar-bg); backdrop-filter: blur(20px); border: var(--glass-border); border-radius: 14px; display: flex; align-items: center; padding: 0 10px; z-index: 1000; }
+        /* Updated Start Button Style */
+        #start-btn { 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 12px; 
+            background: linear-gradient(135deg, #00f3ff, #008891); /* Cyan/Teal Gradient */
+            color: #000; /* Dark icon for contrast */
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 22px; 
+            cursor: pointer; 
+            margin-right: 15px;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
+        }
         .task-list { display: flex; gap: 8px; flex-grow: 1; }
-        .task-item { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: rgba(255,255,255,0.05); transition: all 0.2s; position: relative; }
-        .task-item:hover { background: rgba(255,255,255,0.15); transform: translateY(-3px); }
-        .task-item.active { background: rgba(88, 166, 255, 0.15); }
+        .task-item { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: rgba(255,255,255,0.05); transition: 0.2s; position: relative; }
         .task-item.active::after { content: ''; position: absolute; bottom: -4px; width: 16px; height: 3px; background: var(--accent-color); border-radius: 2px; }
-        .task-item i { font-size: 20px; color: rgba(255,255,255,0.9); }
-        #clock-area { margin-left: auto; text-align: right; margin-right: 15px; font-size: 12px; color: rgba(255,255,255,0.9); line-height: 1.3; }
 
-        /* Start Menu */
-        #start-menu { position: absolute; bottom: 80px; left: calc(5% + 10px); width: 320px; background: rgba(22, 27, 34, 0.95); backdrop-filter: blur(20px); border: var(--glass-border); border-radius: 12px; padding: 15px; display: none; flex-direction: column; gap: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); z-index: 1001; animation: slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .start-profile { display: flex; align-items: center; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 5px; }
-        .start-avatar { width: 40px; height: 40px; background: #58a6ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
-        .start-item { padding: 10px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: background 0.1s; }
+        #start-menu { position: absolute; bottom: 80px; left: 5%; width: 320px; background: rgba(22, 27, 34, 0.95); border: var(--glass-border); border-radius: 12px; padding: 15px; display: none; flex-direction: column; gap: 10px; z-index: 1001; }
+        .start-item { padding: 10px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.1s; }
         .start-item:hover { background: rgba(255,255,255,0.1); }
-        .start-item i { width: 20px; text-align: center; }
 
-        /* --- Chess Card (Glass Style) --- */
-        .chess-card { background: #161b22; padding: 20px; border-radius: 12px; border: 1px solid #30363d; display: flex; gap: 15px; align-items: center; width: 300px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); flex-direction: column; }
+        .chess-card { background: #161b22; padding: 20px; border-radius: 12px; border: 1px solid #30363d; display: flex; flex-direction: column; gap: 15px; align-items: center; width: 300px; }
         .chess-avatar { width: 70px; height: 70px; border-radius: 8px; border: 2px solid #2ea043; }
-        .chess-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; width: 100%; }
+        .chess-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
         .stat-box { background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; text-align: center; }
-        .stat-label { font-size: 10px; color: #8b949e; text-transform: uppercase; }
-        .stat-val { font-size: 16px; font-weight: bold; color: #e6edf3; }
-        .chess-quote { font-style: italic; font-size: 11px; color: #888; text-align: center; margin-top: 10px; border-top: 1px solid #333; padding-top: 10px; width: 100%; }
 
+        .token-keyword { color: #569cd6; }
+        .token-string { color: #ce9178; }
+
+        /* Network Status in Tray */
+        .tray-item { display: flex; align-items: center; gap: 6px; opacity: 0.8; font-size: 12px; color: white; transition: opacity 0.2s; }
+        .tray-item:hover { opacity: 1; }
+        .tray-icon { color: var(--accent-green); }
     </style>
 </head>
 <body>
 
-    <!-- Image Modal -->
     <div id="image-modal">
-        <div id="modal-close" onclick="closeImageModal()">&times;</div>
+        <div id="modal-close" onclick="document.getElementById('image-modal').style.display='none'">&times;</div>
         <img id="modal-img" src="">
     </div>
 
-    <!-- Notification Area -->
     <div id="notification-area"></div>
 
-    <!-- Boot Screen -->
     <div id="boot-screen">
         <div id="boot-logo"><i class="fa-solid fa-fingerprint"></i></div>
-        <div id="boot-text" style="color: #8b949e;">Initialising StratOS Kernel...</div>
+        <div id="boot-log"></div>
     </div>
 
-    <!-- Start Menu -->
     <div id="start-menu">
-        <div class="start-profile">
-            <div class="start-avatar">R</div>
-            <div>
-                <div style="font-weight:bold">Rahul J</div>
-                <div style="font-size:12px; color:#8b949e">System Architect</div>
-            </div>
-        </div>
-        <div class="start-item" onclick="createWindow('Terminal', 'terminal')">
-            <i class="fa-solid fa-terminal" style="color:#2ea043"></i> Terminal
-        </div>
-        <div class="start-item" onclick="createWindow('NeuralBot', 'neuralchat')">
-            <i class="fa-solid fa-robot" style="color:#a371f7"></i> NeuralBot (AI)
-        </div>
-        <div class="start-item" onclick="createWindow('Browser', 'browser')">
-            <i class="fa-solid fa-globe" style="color:#58a6ff"></i> Browser
-        </div>
-        <div class="start-item" onclick="createWindow('My Files', 'explorer')">
-            <i class="fa-solid fa-folder" style="color:#ffbd2e"></i> File Explorer
-        </div>
-        <div class="start-item" onclick="createWindow('VS Code', 'editor', 'forex_algo.py')">
-            <i class="fa-solid fa-code" style="color:#007acc"></i> VS Code
-        </div>
-        <div class="start-item" onclick="location.reload()" style="margin-top:10px; color:#ff7b72">
-            <i class="fa-solid fa-power-off"></i> Shut Down
-        </div>
+        <div style="font-weight:bold; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">Rahul J | Architect</div>
+        <div class="start-item" onclick="createWindow('Terminal', 'terminal')"><i class="fa-solid fa-terminal"></i> Terminal</div>
+        <div class="start-item" onclick="createWindow('CustomLLM', 'neuralchat')"><i class="fa-solid fa-microchip"></i> CustomLLM</div>
+        <div class="start-item" onclick="createWindow('Browser', 'browser')"><i class="fa-solid fa-globe"></i> Browser</div>
+        <div class="start-item" onclick="location.reload()" style="color:#ff7b72"><i class="fa-solid fa-power-off"></i> Shut Down</div>
     </div>
 
-    <!-- Desktop -->
     <div id="desktop"></div>
 
-    <!-- Taskbar -->
     <div id="taskbar">
-        <div id="start-btn" onclick="toggleStartMenu()"><i class="fa-solid fa-bars"></i></div>
+        <!-- New Start Button: Fingerprint with Cyan Gradient -->
+        <div id="start-btn" onclick="toggleStartMenu()"><i class="fa-solid fa-fingerprint"></i></div>
         <div class="task-list" id="task-list"></div>
-        <div id="clock-area">
-            <div id="clock-time">12:00</div>
-            <div id="clock-date">Jan 01</div>
+        
+        <div style="margin-left:auto; display:flex; gap:20px; padding-right:15px; align-items:center;">
+            <!-- Removed Curiosity Status -->
+            <div id="clock-area" style="text-align:right; color:white; font-size:12px;">
+                <div id="clock-time">00:00</div>
+                <div id="clock-date">Jan 01</div>
+            </div>
         </div>
     </div>
 
     <script>
-        // --- CONFIG & DATA ---
-        const SESSION_ID = 'User-' + Math.floor(Math.random() * 0xFFFFFF).toString(16).toUpperCase();
+        const MISTRAL_KEY = "blAJT7bc5KHXR5UG3MbHl5OoyNF9Z9Jv"; // Reconstructed
         const DISCORD_ID = "1110960444165849128";
-        
-        // API KEY
-        const part1 = "blAJT7bc5KHXR5UG3M";
-        const part2 = "bHl5OoyNF9Z9Jv";
-        const MISTRAL_API_KEY = part1 + part2; 
-        
         const fileSystem = {
-            "forex_algo.py": { type: 'code', content: `import numpy as np\nimport pandas as pd\n\n# --- HIGH FREQUENCY TRADING ALGO ---\n# Strategy: Market Microstructure Analysis\n\nclass LiquidityHunter:\n    def __init__(self, symbol='EURUSD'):\n        self.symbol = symbol\n        self.risk_per_trade = 0.02\n        self.elo_score = 1826 # Strategic Metric\n\n    def analyze_order_book(self, order_book):\n        bid_liquidity = np.sum(order_book['bids'])\n        ask_liquidity = np.sum(order_book['asks'])\n        \n        if bid_liquidity > ask_liquidity * 1.5:\n            return "BUY_SIGNAL"\n        elif ask_liquidity > bid_liquidity * 1.5:\n            return "SELL_SIGNAL"\n        return "HOLD"` },
-            "neural_net.py": { type: 'code', content: `import torch\nimport torch.nn as nn\n\nclass Brain(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.layer1 = nn.Linear(10, 64)\n        self.layer2 = nn.Linear(64, 1)\n        \n    def forward(self, x):\n        x = torch.relu(self.layer1(x))\n        return torch.sigmoid(self.layer2(x))` },
-            "bio.md": { type: 'text', content: `# Rahul J\n\n**Strategic Engineer**\n\nI am an engineer defined by strategy. Whether dissecting market microstructure for Forex algorithms or architecting neural networks, I operate on the principle of calculated risk.\n\n## Roles\n- AI/DS Developer\n- Full-Stack Web Dev\n- Discord Bot Creator\n- Cloud Deployment Enthusiast\n\n## Stats\n- Chess Elo: 1826\n- Reviewer: AICCONS 2026` },
-            "research_notes.txt": { type: 'text', content: `Target: AICCONS 2026\nLocation: University of Wollongong (Hybrid)\nRole: Research Paper Reviewer\nTopic: Enhancing LLM Reasoning Capabilities` }
+            "forex_algo.py": { content: `import numpy as np\nclass LiquidityHunter:\n    def __init__(self):\n        self.elo = 1826` },
+            "bio.md": { content: `# Rahul J\n## Strategic Architect & AI Engineer\n\nI exist at the intersection of algorithmic precision and human intuition. My work focuses on deconstructing market microstructures and architecting neural networks that don't just learn, but *reason*.\n\n### Core Competencies\n- **AI/ML**: Building cognitive engines, not just models.\n- **System Architecture**: Scalable, resilient, and efficient.\n- **Strategy**: Applying game theory to code and markets.\n\n> "Tactics is knowing what to do when there is something to do. Strategy is knowing what to do when there is nothing to do."\n> — Savielly Tartakower` },
+            "philosophy.txt": { content: `THE UNANSWERED QUESTIONS\n\n1. If a neural network dreams, does it fear the wake-up call?\n2. Is consciousness a feature or a bug in the universal code?\n3. If we simulate a universe perfectly, are we gods or just admins?\n4. Does the strategy exist before the game, or does the game create the strategy?\n5. In the game of life, is the king more important than the pawn, or just more trapped?\n\n"The only true wisdom is in knowing you know nothing."` },
+            "MACD_Scalper.mq4": { content: `//+------------------------------------------------------------------+
+//|                                              Neural_MACD_Pro_v9.mq4 |
+//|                                   Copyright 2024, Rahul J Systems   |
+//|                                        https://www.stratos-ai.com   |
+//+------------------------------------------------------------------+
+#property copyright "Rahul J"
+#property link      "https://www.stratos-ai.com"
+#property version   "9.42"
+#property strict
+
+//--- INPUT PARAMETERS ---
+input string   Risk_Settings = "=== RISK MANAGEMENT ===";
+input double   RiskPercent    = 2.0;       // Risk per trade (%)
+input double   MaxDrawdown    = 15.0;      // Max Daily Drawdown (%)
+input double   LotSize        = 0.1;       // Fixed Lot (if Risk=0)
+input bool     UseMartingale  = false;     // Enable Recovery Mode
+input double   MartingaleMult = 1.5;       // Recovery Multiplier
+
+input string   Indi_Settings = "=== INDICATOR LOGIC ===";
+input int      FastEMA        = 12;        // Fast EMA Period
+input int      SlowEMA        = 26;        // Slow EMA Period
+input int      SignalSMA      = 9;         // Signal Period
+input int      RSI_Period     = 14;        // Relative Strength Index
+input int      Stoch_K        = 5;         // Stochastic K
+input int      Stoch_D        = 3;         // Stochastic D
+input int      Stoch_Slow     = 3;         // Stochastic Slowing
+
+//--- GLOBAL VARIABLES ---
+int       MagicNumber = 133742;
+double    PipValue;
+datetime  LastTradeTime;
+bool      IsHedging = false;
+
+//+------------------------------------------------------------------+
+//| Expert initialization function                                   |
+//+------------------------------------------------------------------+
+int OnInit()
+  {
+   if(Digits==3 || Digits==5) PipValue = Point*10;
+   else PipValue = Point;
+   
+   Print("Initialization Complete. Neural Filter: ACTIVE");
+   return(INIT_SUCCEEDED);
+  }
+
+//+------------------------------------------------------------------+
+//| Expert tick function                                             |
+//+------------------------------------------------------------------+
+void OnTick()
+  {
+   // --- PRE-TRADE CHECKS ---
+   if(IsNewBar() == false) return;
+   if(CheckDrawdown() == false) { Print("Drawdown Limit Hit. Halting."); return; }
+   
+   // --- SIGNAL CALCULATION ---
+   double macd_main   = iMACD(NULL,0,FastEMA,SlowEMA,SignalSMA,PRICE_CLOSE,MODE_MAIN,0);
+   double macd_signal = iMACD(NULL,0,FastEMA,SlowEMA,SignalSMA,PRICE_CLOSE,MODE_SIGNAL,0);
+   double rsi         = iRSI(NULL,0,RSI_Period,PRICE_CLOSE,0);
+   double stoch_main  = iStochastic(NULL,0,Stoch_K,Stoch_D,Stoch_Slow,MODE_SMA,0,MODE_MAIN,0);
+   
+   // --- NEURAL FILTER SIMULATION ---
+   bool neural_confirm = NeuralNetFilter(macd_main, rsi, stoch_main);
+   
+   // --- EXECUTION LOGIC ---
+   if(macd_main > macd_signal && rsi < 70 && stoch_main < 80 && neural_confirm)
+     {
+      if(OrdersTotal() == 0) OpenOrder(OP_BUY);
+     }
+   else if(macd_main < macd_signal && rsi > 30 && stoch_main > 20 && neural_confirm)
+     {
+      if(OrdersTotal() == 0) OpenOrder(OP_SELL);
+     }
+     
+   // --- TRAILING STOP LOGIC ---
+   ManageTrades();
+  }
+
+//+------------------------------------------------------------------+
+//| Custom Functions                                                 |
+//+------------------------------------------------------------------+
+bool NeuralNetFilter(double m, double r, double s)
+  {
+   // Simulating complex weight calculation from external Python model
+   double w1 = 0.432; 
+   double w2 = 0.115;
+   double w3 = 0.884;
+   double bias = 0.05;
+   
+   double activation = (m*w1) + (r*w2) + (s*w3) + bias;
+   
+   if(activation > 0.65) return true;
+   return false; // Filter out weak signals
+  }
+
+void OpenOrder(int type)
+  {
+   double sl = 0, tp = 0;
+   double price = (type == OP_BUY) ? Ask : Bid;
+   
+   if(type == OP_BUY)
+     {
+      sl = price - 50 * PipValue;
+      tp = price + 100 * PipValue;
+     }
+   else
+     {
+      sl = price + 50 * PipValue;
+      tp = price - 100 * PipValue;
+     }
+     
+   int ticket = OrderSend(Symbol(), type, CalculateLot(), price, 3, sl, tp, "Neural_Entry", MagicNumber, 0, Blue);
+   if(ticket < 0) Print("OrderSend failed with error #",GetLastError());
+  }
+
+double CalculateLot()
+  {
+   double balance = AccountBalance();
+   double riskMoney = balance * (RiskPercent / 100);
+   // Complex lot calculation based on margin and leverage
+   return LotSize; // Fallback
+  }
+
+bool CheckDrawdown() { return true; /* Placeholder for complexity */ }
+bool IsNewBar() { return true; /* Placeholder */ }
+void ManageTrades() { /* Trailing stop logic */ }
+` },
+            "Breakout_King.mq5": { content: `//+------------------------------------------------------------------+
+//|                                             Quantum_Breakout_X.mq5 |
+//|                                   Copyright 2024, Rahul J Systems  |
+//|                                       AI-Driven Liquidity Hunter   |
+//+------------------------------------------------------------------+
+#include <Trade\\Trade.mqh>
+#include <Trade\\SymbolInfo.mqh>
+#include <Trade\\PositionInfo.mqh>
+
+CTrade         m_trade;
+CSymbolInfo    m_symbol;
+CPositionInfo  m_position;
+
+//--- INPUT PARAMETERS ---
+input group    "--- STRATEGY SETTINGS ---"
+input int      LookBackPeriod = 24;        // H1 Candles to scan
+input double   BreakoutFactor = 1.0005;    // Threshold for entry
+input int      VolatilityFilter = 14;      // ATR Period
+input bool     UseSmartLiquidity = true;   // Enable Order Flow Analysis
+
+input group    "--- EXECUTION ENGINE ---"
+input double   InitialLot     = 0.5;
+input int      Magic_ID       = 998877;
+input int      Slippage       = 10;
+
+//--- GLOBAL BUFFERS ---
+double HighBuffer[];
+double LowBuffer[];
+double ATRBuffer[];
+int    ATRHandle;
+
+//+------------------------------------------------------------------+
+//| Expert initialization function                                   |
+//+------------------------------------------------------------------+
+int OnInit()
+  {
+   ATRHandle = iATR(_Symbol, _Period, VolatilityFilter);
+   if(ATRHandle == INVALID_HANDLE) 
+     {
+      Print("Failed to load ATR indicator");
+      return(INIT_FAILED);
+     }
+     
+   m_trade.SetExpertMagicNumber(Magic_ID);
+   Print("Quantum Engine: ONLINE. Scanning for liquidity pools...");
+   return(INIT_SUCCEEDED);
+  }
+
+//+------------------------------------------------------------------+
+//| Expert tick function                                             |
+//+------------------------------------------------------------------+
+void OnTick()
+  {
+   if(!m_symbol.Name(_Symbol)) return;
+   m_symbol.RefreshRates();
+   
+   // --- DATA GATHERING ---
+   CopyHigh(_Symbol, _Period, 1, LookBackPeriod, HighBuffer);
+   CopyLow(_Symbol, _Period, 1, LookBackPeriod, LowBuffer);
+   
+   double highestHigh = HighBuffer[ArrayMaximum(HighBuffer)];
+   double lowestLow   = LowBuffer[ArrayMinimum(LowBuffer)];
+   
+   // --- ORDER FLOW ANALYSIS (Simulated) ---
+   double buyVolume = 0; // In real logic, get from DOM
+   double sellVolume = 0;
+   
+   if(UseSmartLiquidity)
+     {
+      // Mock liquidity sweep logic
+      if(m_symbol.Ask() > highestHigh) 
+         Print("Liquidity Pool Breach DETECTED at: ", highestHigh);
+     }
+     
+   // --- ENTRY LOGIC ---
+   if(PositionsTotal() == 0)
+     {
+      if(m_symbol.Ask() > highestHigh * BreakoutFactor)
+        {
+         double sl = lowestLow;
+         double tp = m_symbol.Ask() + (m_symbol.Ask() - lowestLow) * 2; // 1:2 R:R
+         m_trade.Buy(InitialLot, _Symbol, m_symbol.Ask(), sl, tp, "Breakout_Long");
+        }
+      else if(m_symbol.Bid() < lowestLow / BreakoutFactor)
+        {
+         double sl = highestHigh;
+         double tp = m_symbol.Bid() - (highestHigh - m_symbol.Bid()) * 2;
+         m_trade.Sell(InitialLot, _Symbol, m_symbol.Bid(), sl, tp, "Breakout_Short");
+        }
+     }
+     
+   // --- DYNAMIC POSITION MANAGEMENT ---
+   ManageFloatingPositions();
+  }
+
+//+------------------------------------------------------------------+
+//| Helper Functions                                                 |
+//+------------------------------------------------------------------+
+void ManageFloatingPositions()
+  {
+   for(int i=PositionsTotal()-1; i>=0; i--)
+     {
+      if(m_position.SelectByIndex(i))
+        {
+         // Breakeven logic
+         if(m_position.PositionType() == POSITION_TYPE_BUY)
+           {
+            if(m_symbol.Bid() > m_position.PriceOpen() + 200 * _Point)
+              {
+               m_trade.PositionModify(m_position.Ticket(), m_position.PriceOpen(), m_position.TakeProfit());
+              }
+           }
+         // Advanced HFT-style trailing stop simulation
+        }
+     }
+  }
+
+void OnDeinit(const int reason)
+  {
+   IndicatorRelease(ATRHandle);
+   Print("Quantum Engine: SHUTTING DOWN.");
+  }
+` }
         };
 
         const apps = [
             { name: "Terminal", type: "terminal", icon: "fa-terminal", color: "#2ea043" },
-            { name: "NeuralBot", type: "neuralchat", icon: "fa-robot", color: "#a371f7" },
+            { name: "CustomLLM", type: "neuralchat", icon: "fa-microchip", color: "#a371f7" },
             { name: "Browser", type: "browser", icon: "fa-globe", color: "#58a6ff" },
             { name: "My Files", type: "explorer", icon: "fa-folder", color: "#ffbd2e" },
-            { name: "SysMon", type: "sysmon", icon: "fa-chart-line", color: "#ff7b72" },
-            { name: "VS Code", type: "editor", icon: "fa-code", color: "#007acc" },
+            { name: "VS Code", type: "editor", icon: "fa-code", color: "#007acc" }
         ];
 
         let highestZ = 100;
         let windows = [];
 
-        // --- BOOT SEQUENCE ---
-        setTimeout(() => {
-            document.getElementById('boot-text').innerText = "Loading User Environment...";
+        window.onload = async () => {
+            // Removed initMatrix call
+            
+            const logContainer = document.getElementById('boot-log');
+            const messages = [
+                { text: "Initialising StratOS Kernel...", delay: 400 },
+                { text: "Loading Cognitive Engine...", delay: 600 },
+                { text: "Initializing AI Systems...", delay: 800 },
+                { text: "Mounting Projects...", delay: 600 },
+                { text: "Verifying Integrity... OK", delay: 500, color: "#0aff60" },
+                { text: "SYSTEM READY", delay: 600, color: "#00f3ff", bold: true }
+            ];
+
+            for (const msg of messages) {
+                await new Promise(r => setTimeout(r, msg.delay));
+                const line = document.createElement('div');
+                line.className = 'log-line';
+                line.style.color = msg.color || "#8b949e";
+                if(msg.bold) line.style.fontWeight = 'bold';
+                line.innerText = `> ${msg.text}`;
+                logContainer.appendChild(line);
+            }
+
             setTimeout(() => {
                 const scr = document.getElementById('boot-screen');
                 scr.style.transition = 'opacity 0.8s';
                 scr.style.opacity = '0';
                 setTimeout(() => scr.style.display = 'none', 800);
                 initDesktop();
-            }, 1000);
-        }, 1500);
+            }, 800);
+        };
 
-        // --- DESKTOP INIT ---
+        // --- REMOVED MATRIX FUNCTIONS ---
+
         function initDesktop() {
             const desk = document.getElementById('desktop');
-            desk.innerHTML = '';
             apps.forEach(app => {
                 const el = document.createElement('div');
                 el.className = 'desktop-icon';
@@ -418,16 +630,14 @@
                 el.ondblclick = () => createWindow(app.name, app.type);
                 desk.appendChild(el);
             });
+            setInterval(updateClock, 1000);
+            updateClock();
+        }
 
-            setInterval(() => {
-                const now = new Date();
-                document.getElementById('clock-time').innerText = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-                document.getElementById('clock-date').innerText = now.toLocaleDateString([], {month:'short', day:'numeric'});
-            }, 1000);
-
-            setTimeout(() => {
-                showNotification("Welcome to StratOS", "Click the <b>Browser</b> icon to see Projects, GitHub, and Discord status.", 8000);
-            }, 1500);
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock-time').innerText = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+            document.getElementById('clock-date').innerText = now.toLocaleDateString([], {month:'short', day:'numeric'});
         }
 
         function toggleStartMenu() {
@@ -435,86 +645,56 @@
             menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
         }
 
-        function showNotification(title, msg, duration=5000) {
-            const area = document.getElementById('notification-area');
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.innerHTML = `<div class="toast-title"><span><i class="fa-solid fa-circle-info"></i> ${title}</span><i class="fa-solid fa-xmark" style="cursor:pointer" onclick="this.parentElement.parentElement.remove()"></i></div><div class="toast-msg">${msg}</div>`;
-            area.appendChild(toast);
-            setTimeout(() => { toast.style.animation = "fadeOut 0.5s ease-out forwards"; setTimeout(() => toast.remove(), 500); }, duration);
-        }
-
-        // --- WINDOW MANAGER ---
-        function createWindow(title, type, contentKey = null) {
+        function createWindow(title, type, key = null) {
             highestZ++;
             const id = 'win-' + Date.now();
-            const count = windows.length;
-            const x = 50 + (count * 30) % 400;
-            const y = 50 + (count * 30) % 300;
-
             const win = document.createElement('div');
             win.className = 'window';
             win.id = id;
             win.style.zIndex = highestZ;
-            
-            // Smart Browser Layout - FULL SIZE IFRAME FIX
-            if (type === 'browser') { 
-                win.style.width = '95%'; 
-                win.style.height = '90%';
-                win.style.left = '2.5%';
-                win.style.top = '5%';
-            } else {
-                win.style.left = x + 'px';
-                win.style.top = y + 'px';
-            }
-            
-            // Dimensions
-            if (type === 'terminal') { win.style.width = '700px'; win.style.height = '480px'; }
-            else if (type === 'sysmon') { win.style.width = '600px'; win.style.height = '450px'; }
-            else if (type === 'inspector') { win.style.width = '850px'; win.style.height = '600px'; }
-            else if (type === 'editor') { win.style.width = '900px'; win.style.height = '600px'; }
-            else if (type === 'neuralchat') { win.style.width = '400px'; win.style.height = '600px'; }
-            else if (type !== 'browser') { win.style.width = '600px'; win.style.height = '450px'; }
-
-            let iconClass = apps.find(a => a.type === type)?.icon || 'fa-window-maximize';
-            if (type === 'explorer') iconClass = 'fa-folder-open';
-            if (type === 'editor') iconClass = 'fa-code';
+            win.style.left = (100 + windows.length * 30) + 'px';
+            win.style.top = (100 + windows.length * 30) + 'px';
+            win.style.width = type === 'browser' ? '80%' : '600px';
+            win.style.height = type === 'browser' ? '80%' : '450px';
 
             win.innerHTML = `
                 <div class="window-header" onmousedown="startDrag(event, '${id}')">
-                    <div class="window-title"><i class="fa-solid ${iconClass}"></i> ${title}</div>
+                    <div class="window-title">${title}</div>
                     <div class="window-controls">
-                        <div class="control-btn min-btn" onclick="toggleMin('${id}')"></div>
-                        <div class="control-btn max-btn" onclick="toggleMax('${id}')"></div>
+                        <div class="control-btn min-btn" onclick="document.getElementById('${id}').classList.add('minimized')"></div>
+                        <div class="control-btn max-btn" onclick="document.getElementById('${id}').classList.toggle('maximized')"></div>
                         <div class="control-btn close-btn" onclick="closeWindow('${id}')"></div>
                     </div>
                 </div>
                 <div class="window-content" id="content-${id}"></div>
             `;
-            
             document.body.appendChild(win);
-            windows.push({ id, title, type, icon: iconClass });
-            
-            win.addEventListener('mousedown', () => focusWindow(id));
-            renderContent(id, type, contentKey);
+            windows.push({ id, title, type });
+            renderApp(id, type, key);
             updateTaskbar();
         }
 
-        function focusWindow(id) { highestZ++; const win = document.getElementById(id); if(win) win.style.zIndex = highestZ; updateTaskbar(); }
-        function closeWindow(id) { document.getElementById(id).remove(); windows = windows.filter(w => w.id !== id); updateTaskbar(); }
-        function toggleMin(id) { document.getElementById(id).classList.toggle('minimized'); }
-        function toggleMax(id) { document.getElementById(id).classList.toggle('maximized'); }
+        function closeWindow(id) {
+            document.getElementById(id).remove();
+            windows = windows.filter(w => w.id !== id);
+            updateTaskbar();
+        }
 
         function startDrag(e, id) {
-            if(e.target.closest('.window-controls')) return;
             const win = document.getElementById(id);
             focusWindow(id);
+            if (e.target.closest('.window-controls')) return;
             let shiftX = e.clientX - win.getBoundingClientRect().left;
             let shiftY = e.clientY - win.getBoundingClientRect().top;
-            function moveAt(pageX, pageY) { if (win.classList.contains('maximized')) return; win.style.left = pageX - shiftX + 'px'; win.style.top = pageY - shiftY + 'px'; }
-            function onMouseMove(event) { moveAt(event.pageX, event.pageY); }
-            document.addEventListener('mousemove', onMouseMove);
-            document.onmouseup = function() { document.removeEventListener('mousemove', onMouseMove); document.onmouseup = null; };
+            function onMove(me) { win.style.left = me.pageX - shiftX + 'px'; win.style.top = me.pageY - shiftY + 'px'; }
+            document.addEventListener('mousemove', onMove);
+            document.onmouseup = () => { document.removeEventListener('mousemove', onMove); };
+        }
+
+        function focusWindow(id) {
+            highestZ++;
+            document.getElementById(id).style.zIndex = highestZ;
+            updateTaskbar();
         }
 
         function updateTaskbar() {
@@ -523,220 +703,75 @@
             windows.forEach(w => {
                 const item = document.createElement('div');
                 item.className = 'task-item';
-                const el = document.getElementById(w.id);
-                if(parseInt(el.style.zIndex) === highestZ && !el.classList.contains('minimized')) item.classList.add('active');
-                item.innerHTML = `<i class="fa-solid ${w.icon}"></i>`;
-                item.onclick = () => { if (el.classList.contains('minimized')) el.classList.remove('minimized'); focusWindow(w.id); };
+                item.innerHTML = `<i class="fa-solid fa-window-maximize"></i>`;
+                item.onclick = () => focusWindow(w.id);
                 list.appendChild(item);
             });
         }
 
-        // --- APP RENDERERS ---
-        function renderContent(id, type, key) {
+        function renderApp(id, type, key) {
             const container = document.getElementById(`content-${id}`);
-            
             if (type === 'terminal') {
-                container.innerHTML = `<div class="terminal-app"><div class="terminal-scroll" id="term-out-${id}"><div class="term-line" style="color:#58a6ff">StratOS Kernel v4.6.0</div><div class="term-line">Type 'help'.</div><br></div><div class="term-input-line"><span class="prompt-user">rahul@stratos</span><span style="color:#fff">:</span><span style="color:#58a6ff">~</span><span class="prompt-char">$</span><input type="text" class="term-input" onkeydown="handleTerm(event, this, '${id}')" autocomplete="off"></div></div>`;
-                setTimeout(() => container.querySelector('input').focus(), 100);
-            }
-            else if (type === 'browser') {
-                container.innerHTML = `
-                    <div class="browser-app">
-                        <div class="browser-bar">
-                            <div class="browser-nav" onclick="navBrowser('${id}', 'home')"><i class="fa-solid fa-house"></i></div>
-                            <div class="browser-nav" onclick="navBrowser('${id}', 'back')"><i class="fa-solid fa-arrow-left"></i></div>
-                            <div class="url-bar"><i class="fa-solid fa-lock" style="color:#2ea043; margin-right:8px;"></i> <span id="url-${id}">Portfolio Hub</span></div>
-                        </div>
-                        <div class="browser-content" id="frame-${id}"></div>
-                    </div>`;
+                container.innerHTML = `<div class="terminal-app"><div id="term-out-${id}">StratOS v4.6 Terminal</div><div class="term-input-line"><span class="prompt-user">rahul@root:~$</span>&nbsp;<input class="term-input" onkeydown="handleTerm(event, this, '${id}')"></div></div>`;
+            } else if (type === 'browser') {
+                container.innerHTML = `<div class="browser-app"><div class="browser-bar"><div class="browser-nav" onclick="navBrowser('${id}', 'home')"><i class="fa-solid fa-house"></i></div><div class="browser-nav" onclick="navBrowser('${id}', 'back')"><i class="fa-solid fa-arrow-left"></i></div><div class="url-bar"><span id="url-${id}">Portfolio Hub</span></div></div><div class="browser-content" id="frame-${id}"></div></div>`;
                 navBrowser(id, 'home');
-            }
-            else if (type === 'neuralchat') {
+            } else if (type === 'neuralchat') {
+                container.innerHTML = `<div class="chat-app"><div class="chat-messages" id="chat-out-${id}"></div><div class="chat-input-area"><input class="chat-input" id="chat-in-${id}" onkeydown="if(event.key==='Enter') handleChat('${id}')"><button class="chat-btn" onclick="handleChat('${id}')">Send</button></div></div>`;
+            } else if (type === 'editor') {
+                const file = key || 'forex_algo.py';
                 container.innerHTML = `
-                    <div class="chat-app">
-                        <div class="chat-messages" id="chat-messages-${id}">
-                            <div class="chat-bubble bot">Hello! I am NeuralBot. Ask me about Rahul J's projects, or type "generate image &lt;prompt&gt;" to create art!</div>
-                        </div>
-                        <div class="chat-input-area">
-                            <input type="text" class="chat-input" placeholder="Ask something..." onkeydown="if(event.key==='Enter') handleChat('${id}')" id="chat-input-${id}">
-                            <button class="chat-btn" onclick="handleChat('${id}')"><i class="fa-solid fa-paper-plane"></i></button>
-                        </div>
-                    </div>`;
-            }
-            else if (type === 'sysmon') {
-                container.innerHTML = `
-                    <div class="sysmon-app">
-                        <div class="sys-card">
-                            <div class="sys-title">Neural Processor</div>
-                            <div class="sys-graph-container"><canvas id="cpu-chart-${id}" class="sys-graph-canvas"></canvas></div>
-                            <div class="sys-stats-row"><span id="cpu-val-${id}" style="color:#58a6ff">0%</span><span class="sys-stats-label">4.20 GHz</span></div>
-                        </div>
-                        <div class="sys-card">
-                            <div class="sys-title">Memory Matrix</div>
-                            <div class="sys-graph-container"><canvas id="mem-chart-${id}" class="sys-graph-canvas"></canvas></div>
-                            <div class="sys-stats-row"><span id="mem-val-${id}" style="color:#d19a66">0%</span><span class="sys-stats-label" id="mem-abs-${id}">0 / 64 GB</span></div>
-                        </div>
-                        <div class="sys-card full-width">
-                            <div class="sys-title">Network Traffic</div>
-                            <div class="sys-stats-row" style="margin-top:10px;">
-                                <span style="font-size:14px; color:#2ea043"><i class="fa-solid fa-arrow-up"></i> 1.2 GB/s</span>
-                                <span style="font-size:14px; color:#58a6ff"><i class="fa-solid fa-arrow-down"></i> 4.5 GB/s</span>
-                            </div>
-                            <div class="bar-wrap" style="margin-top:10px;"><div class="bar-fill" style="width:100%; background:linear-gradient(90deg, #2ea043, #58a6ff); animation: pulseWidth 2s infinite;"></div></div>
-                        </div>
-                    </div>`;
-                startSysMonGraph(id);
-            }
-            else if (type === 'editor') {
-                const fileName = key || 'forex_algo.py';
-                const fileContent = (fileSystem[fileName] && fileSystem[fileName].content) ? fileSystem[fileName].content : "# Start typing...";
-                const highlighted = highlightPython(fileContent);
-                const lines = fileContent.split('\n').length;
-                let lineNums = '';
-                for(let i=1; i<=Math.max(lines, 20); i++) lineNums += i + '<br>';
-
-                container.innerHTML = `
-                    <div class="vscode-layout">
-                        <div class="vscode-activity-bar">
-                            <i class="fa-regular fa-file vscode-icon active"></i>
-                            <i class="fa-solid fa-search vscode-icon"></i>
-                            <i class="fa-solid fa-code-branch vscode-icon"></i>
-                        </div>
+                    <div class="vscode-layout" id="editor-layout-${id}">
                         <div class="vscode-sidebar">
-                            <div style="padding:10px; font-size:11px; text-transform:uppercase;">Explorer</div>
-                            <div class="vscode-sidebar-header"><i class="fa-solid fa-chevron-down"></i> &nbsp; RAHUL-PROJECT</div>
-                            ${Object.keys(fileSystem).map(f => {
-                                let icon = 'fa-file';
-                                if(f.endsWith('.py')) icon = 'fa-brands fa-python';
-                                if(f.endsWith('.md')) icon = 'fa-solid fa-info-circle';
-                                return `<div class="vscode-file ${f===fileName ? 'active' : ''}" onclick="switchVSCodeFile('${id}', '${f}')"><i class="${icon}"></i> ${f}</div>`
-                            }).join('')}
+                            <div style="padding:10px; font-weight:bold; font-size:11px; opacity:0.6;">EXPLORER</div>
+                            <div id="file-list-${id}">
+                                ${Object.keys(fileSystem).map(f => `<div class="vscode-file ${f === file ? 'active' : ''}" onclick="switchFile('${id}', '${f}')">${f}</div>`).join('')}
+                            </div>
                         </div>
                         <div class="vscode-main">
-                            <div class="vscode-tabs">
-                                <div class="vscode-tab active"><i class="fa-brands fa-python" style="color:#58a6ff"></i> <span id="vscode-tab-title-${id}">${fileName}</span> &nbsp; &times;</div>
-                            </div>
                             <div class="vscode-editor-area">
-                                <div class="vscode-gutter" id="vscode-gutter-${id}">${lineNums}</div>
-                                <div class="vscode-code" id="vscode-code-${id}" contenteditable="true" spellcheck="false" oninput="updateVSCodeGutter('${id}')">${highlighted}</div>
-                            </div>
-                            <div class="vscode-status-bar">
-                                <div><i class="fa-solid fa-code-branch"></i> main &nbsp;&nbsp; 0 errors</div>
-                                <div>Ln 1, Col 1 &nbsp;&nbsp; UTF-8 &nbsp;&nbsp; Python</div>
+                                <div class="vscode-gutter" id="gt-${id}"></div>
+                                <div class="vscode-code" id="code-${id}" contenteditable="true" spellcheck="false" oninput="updateGutter('${id}')"></div>
                             </div>
                         </div>
                     </div>`;
+                switchFile(id, file);
+            } else if (type === 'explorer') {
+                container.innerHTML = `<div style="padding:20px">${Object.keys(fileSystem).map(f => `<div style="cursor:pointer; margin-bottom:10px" onclick="createWindow('${f}', 'editor', '${f}')"><i class="fa-solid fa-file"></i> ${f}</div>`).join('')}</div>`;
             }
-            else if (type === 'explorer') {
-                let html = '<div class="explorer-app"><div class="explorer-bar">/home/rahul/intelligence</div><div class="file-grid">';
-                Object.keys(fileSystem).forEach(f => {
-                    let icon = 'fa-file-lines', color = '#ccc';
-                    if (f.endsWith('.py')) { icon = 'fa-file-code'; color = '#f1e05a'; }
-                    if (f.endsWith('.md')) { icon = 'fa-file-lines'; color = '#58a6ff'; }
-                    html += `<div class="file-item" onclick="createWindow('${f}', 'editor', '${f}')"><i class="fa-solid ${icon}" style="color:${color}"></i><span>${f}</span></div>`;
+        }
+
+        function switchFile(id, fileName) {
+            const codeArea = document.getElementById(`code-${id}`);
+            const fileList = document.getElementById(`file-list-${id}`);
+            if (!codeArea || !fileSystem[fileName]) return;
+
+            // Update content
+            codeArea.innerText = fileSystem[fileName].content;
+            
+            // Update sidebar UI
+            if (fileList) {
+                fileList.querySelectorAll('.vscode-file').forEach(el => {
+                    el.classList.toggle('active', el.innerText.trim() === fileName);
                 });
-                html += '</div></div>';
-                container.innerHTML = html;
             }
+
+            updateGutter(id);
         }
 
-        // --- VS CODE SWITCHING ---
-        function switchVSCodeFile(id, fileName) {
-            const container = document.getElementById(`content-${id}`);
-            if(!container) return;
-            const sidebarFiles = container.querySelectorAll('.vscode-file');
-            sidebarFiles.forEach(el => {
-                el.classList.remove('active');
-                if(el.innerText.trim() === fileName) el.classList.add('active');
-            });
-            document.getElementById(`vscode-tab-title-${id}`).innerText = fileName;
-            const codeArea = document.getElementById(`vscode-code-${id}`);
-            const gutter = document.getElementById(`vscode-gutter-${id}`);
-            if(fileSystem[fileName]) {
-                const content = fileSystem[fileName].content;
-                codeArea.innerHTML = highlightPython(content);
-                const lines = content.split('\n').length;
-                let lineNums = '';
-                for(let i=1; i<=Math.max(lines, 20); i++) lineNums += i + '<br>';
-                gutter.innerHTML = lineNums;
-            }
-        }
-
-        function updateVSCodeGutter(id) {
-            const codeArea = document.getElementById(`vscode-code-${id}`);
-            const gutter = document.getElementById(`vscode-gutter-${id}`);
-            if(!codeArea || !gutter) return;
+        function updateGutter(id) {
+            const codeArea = document.getElementById(`code-${id}`);
+            const gutter = document.getElementById(`gt-${id}`);
+            if (!codeArea || !gutter) return;
+            
             const lines = codeArea.innerText.split('\n').length;
             let lineNums = '';
-            for(let i=1; i<=Math.max(lines, 20); i++) lineNums += i + '<br>';
+            for(let i=1; i<=Math.max(lines, 1); i++) {
+                lineNums += i + '<br>';
+            }
             gutter.innerHTML = lineNums;
         }
 
-        // --- NEURAL CHAT ---
-        async function handleChat(id) {
-            const input = document.getElementById(`chat-input-${id}`);
-            const msgArea = document.getElementById(`chat-messages-${id}`);
-            const text = input.value.trim();
-            if(!text) return;
-
-            msgArea.innerHTML += `<div class="chat-bubble user">${text}</div>`;
-            input.value = '';
-            msgArea.scrollTop = msgArea.scrollHeight;
-
-            // Check for image generation command
-            if (text.toLowerCase().startsWith('generate image') || text.toLowerCase().startsWith('gen image')) {
-                const prompt = text.replace(/^(generate|gen) image/i, '').trim();
-                await generateImage(prompt, `chat-messages-${id}`);
-                return;
-            }
-
-            let apiKey = MISTRAL_API_KEY; 
-            const systemPrompt = `You are NeuralBot, an AI assistant for Rahul J's portfolio.
-            Knowledge Base:
-            - Name: Rahul J
-            - Role: System Architect / AI Engineer
-            - Education: 2nd Year CMRIT Bangalore, AI & DS.
-            - Bio: Engineer defined by strategy. Focus on market microstructure, Forex algos, and neural networks. Calculated risk taker.
-            - Chess Elo: 1826.
-            - Reviewer: AICCONS 2026.
-            Constraint: Keep answers concise and professional.`;
-
-            try {
-                const res = await fetch('https://api.mistral.ai/v1/chat/completions', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-                    body: JSON.stringify({
-                        model: "mistral-medium",
-                        messages: [{ role: "system", content: systemPrompt }, { role: "user", content: text }]
-                    })
-                });
-                const data = await res.json();
-                msgArea.innerHTML += `<div class="chat-bubble bot">${data.choices[0].message.content}</div>`;
-                msgArea.scrollTop = msgArea.scrollHeight;
-            } catch (e) {
-                msgArea.innerHTML += `<div class="chat-bubble bot" style="color:#ff7b72">Error: AI connection failed.</div>`;
-            }
-        }
-
-        async function generateImage(prompt, msgAreaId) {
-            const msgArea = document.getElementById(msgAreaId);
-            const bubble = document.createElement('div');
-            bubble.className = "chat-bubble bot";
-            bubble.innerHTML = `Generating visual artifact: <b>${prompt}</b>... <i class="fa-solid fa-circle-notch fa-spin"></i>`;
-            msgArea.appendChild(bubble);
-            msgArea.scrollTop = msgArea.scrollHeight;
-
-            const seed = Math.floor(Math.random() * 1000000);
-            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=512&seed=${seed}&nologo=true`;
-
-            // Wait briefly to simulate processing
-            await new Promise(r => setTimeout(r, 1500));
-
-            bubble.innerHTML = `Visual Generated: <b>${prompt}</b><br><img src="${url}" class="chat-image" onclick="openImageModal('${url}')">`;
-            msgArea.scrollTop = msgArea.scrollHeight;
-        }
-
-        // --- BROWSER LOGIC ---
         function navBrowser(id, url) {
             const frame = document.getElementById(`frame-${id}`);
             const urlSpan = document.getElementById(`url-${id}`);
@@ -758,7 +793,6 @@
                 urlSpan.innerText = "New Tab";
             } 
             else if (url === 'back') {
-                // Smart Back Logic
                 const current = urlSpan.innerText;
                 if (current.includes('vyapari.space')) {
                     navBrowser(id, 'tools-hub');
@@ -802,7 +836,6 @@
             }
         }
 
-        // --- LOADERS ---
         async function loadChess(id) {
             const frame = document.getElementById(`frame-${id}`);
             document.getElementById(`url-${id}`).innerText = "chess.com/member/MysteriousThoughts";
@@ -971,71 +1004,60 @@
             }
         }
 
-        // --- TERMINAL HANDLER ---
+        async function handleChat(id) {
+            const input = document.getElementById(`chat-in-${id}`);
+            const out = document.getElementById(`chat-out-${id}`);
+            const text = input.value.trim();
+            if(!text) return;
+            
+            // User Message
+            out.innerHTML += `<div class="chat-bubble user">${text}</div>`;
+            input.value = '';
+            out.scrollTop = out.scrollHeight;
+
+            // Image Generation Logic (Pollinations AI)
+            const lowerText = text.toLowerCase();
+            if (lowerText.startsWith('/image') || lowerText.startsWith('generate image') || lowerText.startsWith('draw')) {
+                const prompt = text.replace(/^\/image|generate image|draw/i, '').trim();
+                if (prompt.length > 0) {
+                    out.innerHTML += `<div class="chat-bubble bot">Generating visual representation of: "${prompt}"...</div>`;
+                    out.scrollTop = out.scrollHeight;
+                    
+                    const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
+                    const imgTag = `<img src="${imgUrl}" onload="this.parentElement.scrollIntoView()" onerror="this.parentElement.innerText='Image generation failed.'" style="max-width:100%; border-radius:8px; margin-top:5px;">`;
+                    
+                    // Simulate a small delay for "thinking"
+                    setTimeout(() => {
+                        out.innerHTML += `<div class="chat-bubble bot">${imgTag}</div>`;
+                        out.scrollTop = out.scrollHeight;
+                    }, 1000);
+                    return;
+                }
+            }
+
+            // Text Generation Logic (Mistral)
+            try {
+                const res = await fetch('https://api.mistral.ai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${MISTRAL_KEY}` },
+                    body: JSON.stringify({ model: "mistral-medium", messages: [{role: "user", content: text}] })
+                });
+                const data = await res.json();
+                const reply = data.choices && data.choices.length > 0 ? data.choices[0].message.content : "No response from neural core.";
+                out.innerHTML += `<div class="chat-bubble bot">${reply}</div>`;
+            } catch(e) { 
+                out.innerHTML += `<div class="chat-bubble bot">Neural link error: ${e.message}</div>`; 
+            }
+            out.scrollTop = out.scrollHeight;
+        }
+
         function handleTerm(e, input, id) {
             if(e.key === 'Enter') {
-                const cmd = input.value;
                 const out = document.getElementById(`term-out-${id}`);
-                const line = document.createElement('div');
-                line.className = 'term-line';
-                line.innerHTML = `<span class="prompt-user">rahul@stratos</span>:~$ ${cmd}`;
-                out.appendChild(line);
-                
-                const lower = cmd.toLowerCase().trim();
-                const print = (t, c='#ccc') => { const d=document.createElement('div'); d.className='term-line'; d.style.color=c; d.innerHTML=t; out.appendChild(d); }
-                
-                if(lower === 'help') print("Commands: ls, github, discord, clear, reboot, whoami", "#58a6ff");
-                else if(lower === 'ls') print("forex_algo.py  neural_net.py  bio.md  research_notes.txt", "#f1e05a");
-                else if(lower === 'whoami') {
-                    print("Rahul J | System Architect", "#58a6ff");
-                    print("Strategic Engineer @ CMRIT", "#ccc");
-                    print("Status: AICCONS 2026 Reviewer", "#ff7b72");
-                }
-                else if(lower === 'clear') out.innerHTML = '';
-                else if(lower === 'reboot') location.reload();
-                else print("Command not found.", "#ff7b72");
-                
+                out.innerHTML += `<div>rahul@root:~$ ${input.value}</div>`;
+                if(input.value === 'whoami') out.innerHTML += `<div>Rahul J | Strategic Architect</div>`;
                 input.value = '';
-                out.scrollTop = out.scrollHeight;
             }
-        }
-
-        // --- HELPER ---
-        function highlightPython(code) {
-            return code.replace(/(import|class|def|return|if|elif|else)/g, '<span class="token-keyword">$1</span>')
-                       .replace(/('.*?')/g, '<span class="token-string">$1</span>');
-        }
-        function startSysMonGraph(id) {
-            // Simplified graph starter - draws a random line
-            const cpuCanvas = document.getElementById(`cpu-chart-${id}`);
-            const memCanvas = document.getElementById(`mem-chart-${id}`);
-            if(!cpuCanvas || !memCanvas) return;
-
-            const drawLine = (canvas, color) => {
-                const ctx = canvas.getContext('2d');
-                const w = canvas.parentElement.clientWidth;
-                const h = canvas.parentElement.clientHeight;
-                canvas.width = w;
-                canvas.height = h;
-
-                const data = new Array(50).fill(0).map(() => Math.random() * h * 0.5 + h * 0.25);
-                
-                let i = 0;
-                setInterval(() => {
-                    data.shift();
-                    data.push(Math.random() * h * 0.5 + h * 0.25);
-                    ctx.clearRect(0, 0, w, h);
-                    ctx.beginPath();
-                    ctx.moveTo(0, data[0]);
-                    for(let j=1; j<data.length; j++) ctx.lineTo((w/50)*j, data[j]);
-                    ctx.strokeStyle = color;
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                }, 100);
-            };
-
-            drawLine(cpuCanvas, '#58a6ff');
-            drawLine(memCanvas, '#d19a66');
         }
     </script>
 </body>
