@@ -2,14 +2,14 @@
 
 > An immersive, desktop-like portfolio showcasing AI/ML projects, Discord bot development, and full-stack engineering expertise with cutting-edge glassmorphism design.
 
-**Live Demo:** [solvyreryx.github.io](https://solvyreryx.github.io)
+**Live Demo:** [rahulj.space](https://rahulj.space)
 
 ## 🚀 About
 
 Strategic engineer passionate about building AI-driven applications and innovative web solutions. This interactive portfolio demonstrates my technical capabilities through an immersive, Windows-inspired OS desktop interface.
 
 **Key Skills:**
-- 🤖 AI/ML Integration (Mistral, Google Gemini APIs)
+- 🤖 AI/DS Integration (Mistral, Google Gemini APIs)
 - 🔗 Discord.py Bot Development
 - 💻 Full-Stack Web Development
 - ☁️ Cloud Deployment (Railway, GitHub Pages)
