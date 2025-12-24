@@ -34,50 +34,45 @@
             padding: 0;
             overflow: hidden;
             font-family: 'Inter', sans-serif;
-            background: #000; /* Dark background for matrix */
+            background: url('https://images.unsplash.com/photo-1576211572290-5c8a33e567dd?q=80&w=1632&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
             color: var(--text-color);
             height: 100vh;
             user-select: none;
         }
 
-        /* Matrix Canvas Styling */
-        #matrix-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            opacity: 0.35; /* Subtle transparency */
-            pointer-events: none;
-        }
-
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        /* --- Scrollbar Styling --- */
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #424242; border-radius: 5px; border: 1px solid rgba(255,255,255,0.1); }
+        ::-webkit-scrollbar-thumb { background: #424242; border-radius: 3px; border: 1px solid rgba(255,255,255,0.1); }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }
 
+        /* --- Boot Screen --- */
         #boot-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; color: var(--accent-color); font-family: 'JetBrains Mono', monospace;
             z-index: 9999; display: flex; flex-direction: column;
             justify-content: center; align-items: center; font-size: 14px;
         }
-        #boot-logo { font-size: 64px; margin-bottom: 30px; text-shadow: 0 0 20px var(--accent-color); animation: flicker 2s infinite; }
-        #boot-log { width: 320px; text-align: left; font-size: 13px; display: flex; flex-direction: column; gap: 4px; }
-        .log-line { opacity: 0; animation: fadeIn 0.1s forwards; white-space: nowrap; overflow: hidden; }
-        
-        @keyframes fadeIn { to { opacity: 1; } }
+        #boot-logo { font-size: 64px; margin-bottom: 20px; text-shadow: 0 0 20px var(--accent-color); animation: flicker 2s infinite; }
         @keyframes flicker { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
 
+        /* --- Image Modal --- */
         #image-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); z-index: 20000;
             justify-content: center; align-items: center; backdrop-filter: blur(10px);
+            animation: fadeIn 0.2s ease-out;
         }
         #modal-img { max-width: 90%; max-height: 90%; border-radius: 4px; box-shadow: 0 0 40px rgba(0,243,255,0.3); border: 1px solid var(--accent-color); }
-        #modal-close { position: absolute; top: 20px; right: 30px; font-size: 40px; color: white; cursor: pointer; z-index: 20001; }
+        #modal-close {
+            position: absolute; top: 20px; right: 30px; font-size: 40px; color: white; cursor: pointer;
+            z-index: 20001; transition: transform 0.2s;
+        }
+        #modal-close:hover { transform: scale(1.1); color: var(--accent-red); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+        /* --- Notification System --- */
         #notification-area {
             position: absolute; top: 20px; right: 20px; z-index: 10000;
             display: flex; flex-direction: column; gap: 10px; pointer-events: none;
@@ -94,6 +89,7 @@
         @keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes fadeOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(20px); } }
 
+        /* --- Desktop --- */
         #desktop {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             padding: 30px; display: flex; flex-direction: column; flex-wrap: wrap;
@@ -109,9 +105,10 @@
         .desktop-icon i { font-size: 42px; margin-bottom: 10px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7)); }
         .desktop-icon span { font-size: 13px; text-align: center; font-weight: 500; line-height: 1.2; }
 
+        /* --- Windows --- */
         .window {
             position: absolute; background: var(--window-bg); backdrop-filter: blur(25px);
-            border: var(--glass-border); border-radius: 12px;
+            -webkit-backdrop-filter: blur(25px); border: var(--glass-border); border-radius: 12px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8); display: flex; flex-direction: column;
             overflow: hidden; min-width: 200px; min-height: 100px;
             transition: opacity 0.2s, transform 0.2s; animation: openWin 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -127,180 +124,919 @@
         .window-title { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.95); }
         .window-controls { display: flex; gap: 8px; }
         .control-btn { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; position: relative; }
+        .control-btn:hover { filter: brightness(1.2); }
         .close-btn { background: #ff5f56; }
         .min-btn { background: #ffbd2e; }
         .max-btn { background: #27c93f; }
         .window-content { flex-grow: 1; overflow: hidden; position: relative; display: flex; flex-direction: column; }
 
+        /* --- App Styles --- */
         .terminal-app { background-color: #050505; color: #ccc; font-family: 'JetBrains Mono', monospace; height: 100%; padding: 8px; box-sizing: border-box; font-size: 14px; display: flex; flex-direction: column; }
         .terminal-scroll { flex-grow: 1; overflow-y: auto; padding: 10px; }
-        .term-line { margin-bottom: 3px; line-height: 1.5; }
+        .term-line { margin-bottom: 3px; line-height: 1.5; word-wrap: break-word; }
         .term-input-line { display: flex; margin-top: 5px; align-items: center; }
         .prompt-user { color: var(--accent-green); font-weight: bold; }
-        .term-input { background: transparent; border: none; color: #fff; font-family: inherit; font-size: inherit; flex-grow: 1; outline: none; }
+        .term-input { background: transparent; border: none; color: #fff; font-family: inherit; font-size: inherit; flex-grow: 1; outline: none; caret-color: var(--accent-color); }
 
-        .chat-app { display: flex; flex-direction: column; height: 100%; background: var(--chat-bg); }
+        /* Chat Bot */
+        .chat-app { display: flex; flex-direction: column; height: 100%; background: var(--chat-bg); font-family: 'Inter', sans-serif; }
         .chat-messages { flex-grow: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
         .chat-input-area { padding: 15px; background: rgba(0,0,0,0.2); border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; }
-        .chat-input { flex-grow: 1; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; outline: none; }
+        .chat-input { flex-grow: 1; background: #21262d; border: 1px solid #30363d; color: white; padding: 10px; border-radius: 6px; outline: none; font-family: inherit; }
         .chat-btn { background: var(--accent-color); color: #000; border: none; padding: 0 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .chat-bubble { max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 14px; word-wrap: break-word; }
-        .chat-bubble.user { align-self: flex-end; background: var(--chat-bubble-user); color: white; }
-        .chat-bubble.bot { align-self: flex-start; background: var(--chat-bubble-bot); color: #e6edf3; border: 1px solid #30363d; }
+        .chat-bubble { max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 14px; line-height: 1.5; word-wrap: break-word; position: relative; animation: popIn 0.2s; }
+        .chat-bubble.user { align-self: flex-end; background: var(--chat-bubble-user); color: white; border-bottom-right-radius: 2px; }
+        .chat-bubble.bot { align-self: flex-start; background: var(--chat-bubble-bot); color: #e6edf3; border-bottom-left-radius: 2px; border: 1px solid #30363d; }
+        .chat-image { max-width: 100%; border-radius: 8px; margin-top: 5px; cursor: pointer; border: 2px solid var(--accent-color); }
         
-        .browser-app { display: flex; flex-direction: column; height: 100%; background: #1a1a1a; }
-        .browser-bar { background: rgba(30, 30, 30, 0.9); padding: 10px 15px; display: flex; gap: 12px; border-bottom: 1px solid #333; align-items: center; }
-        .url-bar { flex-grow: 1; background: #0d0d0d; border: 1px solid #333; padding: 8px 16px; border-radius: 8px; font-size: 13px; color: #eee; font-family: 'JetBrains Mono', monospace; }
-        .browser-content { flex-grow: 1; background: #fff; position: relative; overflow: hidden; }
-        .browser-home { width: 100%; height: 100%; background: #0d1117; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 40px; }
-        .dial-grid { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; }
-        .dial-item { width: 130px; height: 130px; background: rgba(33, 38, 45, 0.8); border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; border: 1px solid #30363d; }
-        .dial-item:hover { transform: translateY(-8px); border-color: var(--accent-color); }
-        .dial-icon { font-size: 48px; margin-bottom: 10px; }
-
-        .vscode-layout { display: flex; height: 100%; background: var(--vscode-bg); color: #ccc; }
-        .vscode-activity-bar { width: 48px; background: var(--vscode-activity); display: flex; flex-direction: column; align-items: center; padding-top: 10px; }
-        .vscode-icon { font-size: 24px; color: #858585; margin-bottom: 25px; cursor: pointer; }
-        .vscode-sidebar { width: 200px; background: var(--vscode-sidebar); font-size: 13px; border-right: 1px solid #1e1e1e; }
-        .vscode-file { padding: 4px 20px; cursor: pointer; display: flex; align-items: center; gap: 6px; border-left: 2px solid transparent; }
-        .vscode-file.active { background: #37373d; color: #fff; border-left: 2px solid var(--accent-color); }
-        .vscode-main { flex-grow: 1; display: flex; flex-direction: column; }
-        .vscode-tabs { display: flex; background: var(--vscode-sidebar); }
-        .vscode-tab { padding: 8px 15px; background: var(--vscode-sidebar); color: #969696; font-size: 13px; border-right: 1px solid #1e1e1e; }
-        .vscode-tab.active { background: var(--vscode-bg); color: #fff; border-top: 1px solid var(--accent-color); }
-        .vscode-editor-area { flex-grow: 1; display: flex; }
-        .vscode-gutter { width: 50px; text-align: right; padding-right: 15px; padding-top: 10px; font-family: 'Consolas', monospace; font-size: 14px; color: #858585; border-right: 1px solid rgba(255,255,255,0.05); }
-        .vscode-code { flex-grow: 1; padding: 10px; font-family: 'Consolas', monospace; font-size: 14px; white-space: pre; overflow: auto; outline: none; }
-        .vscode-status-bar { height: 22px; background: var(--accent-color); color: #000; display: flex; align-items: center; padding: 0 10px; font-size: 12px; font-weight: bold; }
-
-        #taskbar { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; height: 52px; background: var(--taskbar-bg); backdrop-filter: blur(20px); border: var(--glass-border); border-radius: 14px; display: flex; align-items: center; padding: 0 10px; z-index: 1000; }
-        /* Updated Start Button Style */
-        #start-btn { 
-            width: 40px; 
-            height: 40px; 
-            border-radius: 12px; 
-            background: linear-gradient(135deg, #00f3ff, #008891); /* Cyan/Teal Gradient */
-            color: #000; /* Dark icon for contrast */
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 22px; 
-            cursor: pointer; 
-            margin-right: 15px;
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
+        /* Browser */
+        .browser-app { display: flex; flex-direction: column; height: 100%; background: #1a1a1a; color: #fff; width: 100%; }
+        .browser-bar { background: rgba(30, 30, 30, 0.9); padding: 10px 15px; display: flex; gap: 12px; border-bottom: 1px solid #333; align-items: center; backdrop-filter: blur(10px); }
+        .browser-nav { color: #888; cursor: pointer; padding: 6px; border-radius: 50%; transition: all 0.2s; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; }
+        .browser-nav:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .url-bar { flex-grow: 1; background: #0d0d0d; border: 1px solid #333; padding: 8px 16px; border-radius: 8px; font-size: 13px; color: #eee; display: flex; align-items: center; transition: border 0.2s; font-family: 'JetBrains Mono', monospace; }
+        .url-bar:focus-within { border-color: var(--accent-color); }
+        .browser-content { flex-grow: 1; background: #fff; position: relative; overflow: hidden; display: flex; flex-direction: column; width: 100%; }
+        .browser-content iframe { width: 100%; height: 100%; border: none; display: block; }
+        
+        /* Browser Home & Hubs - Spacing Fixes */
+        .browser-home { 
+            width: 100%; height: 100%; 
+            background: #0d1117; 
+            background-image: radial-gradient(#21262d 1px, transparent 1px); 
+            background-size: 20px 20px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            gap: 40px; 
+            overflow-y: auto;
+            box-sizing: border-box;
+            padding: 20px;
         }
-        .task-list { display: flex; gap: 8px; flex-grow: 1; }
-        .task-item { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: rgba(255,255,255,0.05); transition: 0.2s; position: relative; }
-        .task-item.active::after { content: ''; position: absolute; bottom: -4px; width: 16px; height: 3px; background: var(--accent-color); border-radius: 2px; }
+        .dial-grid { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; max-width: 800px; padding: 20px; }
+        .dial-item { width: 130px; height: 130px; background: rgba(33, 38, 45, 0.8); border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; border: 1px solid #30363d; backdrop-filter: blur(5px); }
+        .dial-item:hover { transform: translateY(-8px); background: #30363d; border-color: var(--accent-color); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
+        .dial-icon { font-size: 48px; margin-bottom: 15px; color: #e6edf3; }
+        .dial-label { font-weight: 600; font-size: 14px; color: #e6edf3; }
 
-        #start-menu { position: absolute; bottom: 80px; left: 5%; width: 320px; background: rgba(22, 27, 34, 0.95); border: var(--glass-border); border-radius: 12px; padding: 15px; display: none; flex-direction: column; gap: 10px; z-index: 1001; }
-        .start-item { padding: 10px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.1s; }
-        .start-item:hover { background: rgba(255,255,255,0.1); }
+        /* Tools Hub Styles */
+        .tools-hub-container { 
+            width: 100%; height: 100%; 
+            display: flex; flex-direction: column; align-items: center; 
+            justify-content: flex-start; 
+            background: #0d1117; 
+            gap: 40px; 
+            overflow-y: auto; 
+            padding: 40px 20px; 
+            box-sizing: border-box; 
+        }
+        .tools-header { font-size: 28px; font-weight: bold; color: #fff; text-align: center; text-transform: uppercase; letter-spacing: 2px; }
+        .tool-cards { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+        .tool-card { width: 220px; height: 160px; background: #161b22; border: 1px solid #30363d; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; flex-shrink: 0; }
+        .tool-card:hover { border-color: var(--accent-color); transform: translateY(-5px); box-shadow: 0 0 30px rgba(0, 243, 255, 0.2); }
+        .tool-card:hover .tool-bg { opacity: 0.1; transform: scale(1.2); }
+        .tool-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, var(--accent-color), #a371f7); opacity: 0; transition: all 0.5s; z-index: 0; }
+        .tool-icon { font-size: 40px; margin-bottom: 15px; color: #e6edf3; z-index: 1; }
+        .tool-name { font-size: 16px; font-weight: bold; color: #fff; z-index: 1; }
+        .tool-desc { font-size: 12px; color: #8b949e; margin-top: 5px; z-index: 1; text-align: center; }
 
-        .chess-card { background: #161b22; padding: 20px; border-radius: 12px; border: 1px solid #30363d; display: flex; flex-direction: column; gap: 15px; align-items: center; width: 300px; }
-        .chess-avatar { width: 70px; height: 70px; border-radius: 8px; border: 2px solid #2ea043; }
-        .chess-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
-        .stat-box { background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; text-align: center; }
+        /* Social / GitHub */
+        .social-feed { width: 100%; height: 100%; overflow-y: auto; background: #0d1117; padding: 20px; box-sizing: border-box; }
+        .github-layout { display: flex; gap: 20px; height: 100%; }
+        .github-sidebar { width: 260px; flex-shrink: 0; }
+        .github-main { flex-grow: 1; overflow-y: auto; }
+        .profile-img { width: 250px; height: 250px; border-radius: 50%; object-fit: cover; border: 1px solid #30363d; margin-bottom: 15px; }
+        .profile-name { font-size: 24px; font-weight: bold; color: #c9d1d9; }
+        .profile-login { font-size: 20px; color: #8b949e; font-weight: 300; margin-bottom: 15px; }
+        .repo-grid { display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
+        .card { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 15px; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
+        .card:hover { border-color: var(--accent-color); background: #161b22; }
+        .card-left { flex-grow: 1; min-width: 0; margin-right: 15px; }
+        .card-title { font-weight: bold; color: var(--accent-color); font-size: 16px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;}
+        .card-desc { font-size: 13px; color: #8b949e; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .card-meta { font-size: 12px; color: #8b949e; margin-top: 6px; display: flex; gap: 15px; align-items: center;}
+        .lang-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .card-actions { display: flex; gap: 10px; }
+        .repo-btn { padding: 6px 12px; border: 1px solid #30363d; background: #21262d; color: #c9d1d9; border-radius: 6px; font-size: 12px; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 5px; transition: background 0.2s; }
+        .repo-btn:hover { background: #30363d; color: #fff; }
 
-        .token-keyword { color: #569cd6; }
+        /* Discord */
+        .discord-container { width: 100%; height: 100%; background: var(--discord-bg); display: flex; justify-content: center; align-items: center; overflow-y: auto; }
+        .discord-modal { width: 600px; background: var(--discord-card); border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.6); position: relative; margin: 20px; }
+        .discord-banner { height: 210px; background-color: var(--discord-blurple); background-size: cover; background-position: center; }
+        .discord-avatar-wrapper { position: absolute; top: 156px; left: 20px; width: 128px; height: 128px; border-radius: 50%; background: var(--discord-card); padding: 7px; }
+        .discord-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; position: relative; z-index: 1; }
+        .discord-status-dot { width: 28px; height: 28px; border-radius: 50%; border: 5px solid var(--discord-card); position: absolute; bottom: 5px; right: 5px; z-index: 3; }
+        .discord-body { margin-top: 80px; padding: 20px; background: #2b2d31; border-radius: 12px; margin: 16px; margin-top: 70px; }
+        .discord-username { font-size: 22px; font-weight: 700; color: #fff; }
+        .discord-handle { font-size: 14px; color: #b9bbbe; margin-bottom: 20px; }
+        .discord-section-title { font-size: 11px; font-weight: 800; color: #b9bbbe; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
+        .discord-bio { font-size: 14px; color: #dbdee1; white-space: pre-wrap; line-height: 1.4; margin-bottom: 20px; }
+        .discord-activity-card { background: #111214; border-radius: 8px; padding: 12px; display: flex; gap: 12px; align-items: center; margin-top: 10px; }
+
+        /* VS Code */
+        .vscode-layout { display: flex; height: 100%; background: var(--vscode-bg); color: #ccc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .vscode-activity-bar { width: 48px; background: var(--vscode-activity); display: flex; flex-direction: column; align-items: center; padding-top: 10px; user-select: none; }
+        .vscode-icon { font-size: 24px; color: #858585; margin-bottom: 25px; cursor: pointer; border-left: 2px solid transparent; padding-left: 10px; width: 100%; box-sizing: border-box; }
+        .vscode-icon:hover, .vscode-icon.active { color: #fff; border-left: 2px solid #fff; }
+        .vscode-sidebar { width: 200px; background: var(--vscode-sidebar); font-size: 13px; display: flex; flex-direction: column; border-right: 1px solid #1e1e1e; user-select: none; }
+        .vscode-sidebar-header { padding: 10px 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; color: #bbbbbb; display: flex; align-items: center; justify-content: space-between; }
+        .vscode-file { padding: 4px 20px; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #cccccc; }
+        .vscode-file:hover { background: #2a2d2e; }
+        .vscode-file.active { background: #37373d; color: #fff; }
+        .vscode-main { flex-grow: 1; display: flex; flex-direction: column; }
+        .vscode-tabs { display: flex; background: var(--vscode-sidebar); overflow-x: auto; user-select: none; }
+        .vscode-tab { padding: 8px 15px; background: var(--vscode-tab-inactive); color: #969696; font-size: 13px; display: flex; align-items: center; gap: 8px; border-right: 1px solid #1e1e1e; cursor: pointer; min-width: 120px; }
+        .vscode-tab.active { background: var(--vscode-bg); color: #fff; border-top: 1px solid #58a6ff; }
+        .vscode-editor-area { flex-grow: 1; background: var(--vscode-bg); display: flex; overflow: hidden; position: relative; }
+        .vscode-gutter { width: 50px; background: var(--vscode-bg); color: #858585; text-align: right; padding-right: 15px; padding-top: 10px; font-family: 'Consolas', monospace; font-size: 14px; line-height: 20px; user-select: none; }
+        .vscode-code { flex-grow: 1; padding: 10px; color: #d4d4d4; font-family: 'Consolas', monospace; font-size: 14px; line-height: 20px; white-space: pre; overflow: auto; outline: none; cursor: text; user-select: text; -webkit-user-select: text; }
+        .vscode-status-bar { height: 22px; background: var(--accent-color); color: #000; font-weight: bold; display: flex; align-items: center; padding: 0 10px; font-size: 12px; justify-content: space-between; user-select: none; }
+        .token-keyword { color: #569cd6; font-weight: bold; }
         .token-string { color: #ce9178; }
+        .token-comment { color: #6a9955; }
+        .token-class { color: #4ec9b0; }
+        .token-function { color: #dcdcaa; }
+        .token-number { color: #b5cea8; }
 
-        /* Network Status in Tray */
-        .tray-item { display: flex; align-items: center; gap: 6px; opacity: 0.8; font-size: 12px; color: white; transition: opacity 0.2s; }
-        .tray-item:hover { opacity: 1; }
-        .tray-icon { color: var(--accent-green); }
+        /* SysMon - Enhanced */
+        .sysmon-app { padding: 20px; height: 100%; box-sizing: border-box; font-family: 'JetBrains Mono', monospace; overflow-y: auto; color: #e6edf3; background: #080a10; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-content: flex-start; }
+        .sys-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+        .sys-title { font-size: 12px; color: var(--accent-color); text-transform: uppercase; margin-bottom: 10px; font-weight: bold; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .sys-graph-container { height: 100px; background: #0d1117; border: 1px solid #333; position: relative; overflow: hidden; margin-bottom: 10px; border-radius: 4px; }
+        .sys-graph-canvas { width: 100%; height: 100%; display: block; }
+        .sys-stats-row { display: flex; justify-content: space-between; font-size: 20px; font-weight: bold; align-items: flex-end; margin-top: 5px; }
+        .sys-stats-label { font-size: 11px; color: #888; font-weight: normal; }
+        .full-width { grid-column: span 2; }
+
+        /* File Explorer */
+        .explorer-app { height: 100%; display: flex; flex-direction: column; }
+        .explorer-bar { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px; color: #8b949e; background: rgba(0,0,0,0.2); }
+        .file-grid { padding: 15px; display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; overflow-y: auto; }
+        .file-item { display: flex; flex-direction: column; align-items: center; padding: 10px; border-radius: 6px; cursor: pointer; transition: background 0.1s; }
+        .file-item:hover { background: rgba(255,255,255,0.1); }
+        .file-item i { font-size: 32px; margin-bottom: 8px; }
+        
+        /* Taskbar */
+        #taskbar { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); width: 90%; height: 52px; background: var(--taskbar-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: var(--glass-border); border-radius: 14px; display: flex; align-items: center; padding: 0 10px; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        #start-btn { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #2ea043, #238636); color: white; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; margin-right: 15px; margin-left: 5px; transition: transform 0.2s; box-shadow: 0 4px 12px rgba(46, 160, 67, 0.4); }
+        #start-btn:hover { transform: scale(1.05); }
+        .task-list { display: flex; gap: 8px; flex-grow: 1; }
+        .task-item { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; background: rgba(255,255,255,0.05); transition: all 0.2s; position: relative; }
+        .task-item:hover { background: rgba(255,255,255,0.15); transform: translateY(-3px); }
+        .task-item.active { background: rgba(88, 166, 255, 0.15); }
+        .task-item.active::after { content: ''; position: absolute; bottom: -4px; width: 16px; height: 3px; background: var(--accent-color); border-radius: 2px; }
+        .task-item i { font-size: 20px; color: rgba(255,255,255,0.9); }
+        #clock-area { margin-left: auto; text-align: right; margin-right: 15px; font-size: 12px; color: rgba(255,255,255,0.9); line-height: 1.3; }
+
+        /* Start Menu */
+        #start-menu { position: absolute; bottom: 80px; left: calc(5% + 10px); width: 320px; background: rgba(22, 27, 34, 0.95); backdrop-filter: blur(20px); border: var(--glass-border); border-radius: 12px; padding: 15px; display: none; flex-direction: column; gap: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); z-index: 1001; animation: slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .start-profile { display: flex; align-items: center; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 5px; }
+        .start-avatar { width: 40px; height: 40px; background: #58a6ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; }
+        .start-item { padding: 10px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: background 0.1s; }
+        .start-item:hover { background: rgba(255,255,255,0.1); }
+        .start-item i { width: 20px; text-align: center; }
+
+        /* --- Chess Card (Glass Style) --- */
+        .chess-card { background: #161b22; padding: 20px; border-radius: 12px; border: 1px solid #30363d; display: flex; gap: 15px; align-items: center; width: 300px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); flex-direction: column; }
+        .chess-avatar { width: 70px; height: 70px; border-radius: 8px; border: 2px solid #2ea043; }
+        .chess-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; width: 100%; }
+        .stat-box { background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; text-align: center; }
+        .stat-label { font-size: 10px; color: #8b949e; text-transform: uppercase; }
+        .stat-val { font-size: 16px; font-weight: bold; color: #e6edf3; }
+        .chess-quote { font-style: italic; font-size: 11px; color: #888; text-align: center; margin-top: 10px; border-top: 1px solid #333; padding-top: 10px; width: 100%; }
+
     </style>
 </head>
 <body>
 
-    <!-- Matrix Background Canvas -->
-    <canvas id="matrix-bg"></canvas>
-
+    <!-- Image Modal -->
     <div id="image-modal">
-        <div id="modal-close" onclick="document.getElementById('image-modal').style.display='none'">&times;</div>
+        <div id="modal-close" onclick="closeImageModal()">&times;</div>
         <img id="modal-img" src="">
     </div>
 
+    <!-- Notification Area -->
     <div id="notification-area"></div>
 
+    <!-- Boot Screen -->
     <div id="boot-screen">
         <div id="boot-logo"><i class="fa-solid fa-fingerprint"></i></div>
-        <div id="boot-log"></div>
+        <div id="boot-text" style="color: #8b949e;">Initialising StratOS Kernel...</div>
     </div>
 
+    <!-- Start Menu -->
     <div id="start-menu">
-        <div style="font-weight:bold; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">Rahul J | Architect</div>
-        <div class="start-item" onclick="createWindow('Terminal', 'terminal')"><i class="fa-solid fa-terminal"></i> Terminal</div>
-        <div class="start-item" onclick="createWindow('CustomLLM', 'neuralchat')"><i class="fa-solid fa-microchip"></i> CustomLLM</div>
-        <div class="start-item" onclick="createWindow('Browser', 'browser')"><i class="fa-solid fa-globe"></i> Browser</div>
-        <div class="start-item" onclick="location.reload()" style="color:#ff7b72"><i class="fa-solid fa-power-off"></i> Shut Down</div>
+        <div class="start-profile">
+            <div class="start-avatar">R</div>
+            <div>
+                <div style="font-weight:bold">Rahul J</div>
+                <div style="font-size:12px; color:#8b949e">System Architect</div>
+            </div>
+        </div>
+        <div class="start-item" onclick="createWindow('Terminal', 'terminal')">
+            <i class="fa-solid fa-terminal" style="color:#2ea043"></i> Terminal
+        </div>
+        <div class="start-item" onclick="createWindow('NeuralBot', 'neuralchat')">
+            <i class="fa-solid fa-robot" style="color:#a371f7"></i> NeuralBot (AI)
+        </div>
+        <div class="start-item" onclick="createWindow('Browser', 'browser')">
+            <i class="fa-solid fa-globe" style="color:#58a6ff"></i> Browser
+        </div>
+        <div class="start-item" onclick="createWindow('My Files', 'explorer')">
+            <i class="fa-solid fa-folder" style="color:#ffbd2e"></i> File Explorer
+        </div>
+        <div class="start-item" onclick="createWindow('VS Code', 'editor', 'forex_algo.py')">
+            <i class="fa-solid fa-code" style="color:#007acc"></i> VS Code
+        </div>
+        <div class="start-item" onclick="location.reload()" style="margin-top:10px; color:#ff7b72">
+            <i class="fa-solid fa-power-off"></i> Shut Down
+        </div>
     </div>
 
+    <!-- Desktop -->
     <div id="desktop"></div>
 
+    <!-- Taskbar -->
     <div id="taskbar">
-        <!-- New Start Button: Fingerprint with Cyan Gradient -->
-        <div id="start-btn" onclick="toggleStartMenu()"><i class="fa-solid fa-fingerprint"></i></div>
+        <div id="start-btn" onclick="toggleStartMenu()"><i class="fa-solid fa-bars"></i></div>
         <div class="task-list" id="task-list"></div>
-        
-        <div style="margin-left:auto; display:flex; gap:20px; padding-right:15px; align-items:center;">
-            <!-- Removed Curiosity Status -->
-            <div id="clock-area" style="text-align:right; color:white; font-size:12px;">
-                <div id="clock-time">00:00</div>
-                <div id="clock-date">Jan 01</div>
-            </div>
+        <div id="clock-area">
+            <div id="clock-time">12:00</div>
+            <div id="clock-date">Jan 01</div>
         </div>
     </div>
 
     <script>
-        const MISTRAL_KEY = "blAJT7bc5KHXR5UG3MbHl5OoyNF9Z9Jv"; // Reconstructed
+        // --- CONFIG & DATA ---
+        const SESSION_ID = 'User-' + Math.floor(Math.random() * 0xFFFFFF).toString(16).toUpperCase();
+        const DISCORD_ID = "1110960444165849128";
+        
+        // API KEY
+        const part1 = "blAJT7bc5KHXR5UG3M";
+        const part2 = "bHl5OoyNF9Z9Jv";
+        const MISTRAL_API_KEY = part1 + part2; 
+        
         const fileSystem = {
-            "forex_algo.py": { content: `import numpy as np\nclass LiquidityHunter:\n    def __init__(self):\n        self.elo = 1826` },
-            "bio.md": { content: `# Rahul J\n## Strategic Architect & AI Engineer\n\nI exist at the intersection of algorithmic precision and human intuition. My work focuses on deconstructing market microstructures and architecting neural networks that don't just learn, but *reason*.\n\n### Core Competencies\n- **AI/ML**: Building cognitive engines, not just models.\n- **System Architecture**: Scalable, resilient, and efficient.\n- **Strategy**: Applying game theory to code and markets.\n\n> "Tactics is knowing what to do when there is something to do. Strategy is knowing what to do when there is nothing to do."\n> â€” Savielly Tartakower` },
-            "philosophy.txt": { content: `THE UNANSWERED QUESTIONS\n\n1. If a neural network dreams, does it fear the wake-up call?\n2. Is consciousness a feature or a bug in the universal code?\n3. If we simulate a universe perfectly, are we gods or just admins?\n4. Does the strategy exist before the game, or does the game create the strategy?\n5. In the game of life, is the king more important than the pawn, or just more trapped?\n\n"The only true wisdom is in knowing you know nothing."` },
-            "MACD_Scalper.mq4": { content: `//+------------------------------------------------------------------+
-//|                                              Neural_MACD_Pro_v9.mq4 |
-//|                                   Copyright 2024, Rahul J Systems   |
-//|                                        https://www.stratos-ai.com   |
-//+------------------------------------------------------------------+
-#property copyright "Rahul J"
-#property link      "https://www.stratos-ai.com"
-#property version   "9.42"
-#property strict
+            "forex_algo.py": { type: 'code', content: `import numpy as np\nimport pandas as pd\n\n# --- HIGH FREQUENCY TRADING ALGO ---\n# Strategy: Market Microstructure Analysis\n\nclass LiquidityHunter:\n    def __init__(self, symbol='EURUSD'):\n        self.symbol = symbol\n        self.risk_per_trade = 0.02\n        self.elo_score = 1826 # Strategic Metric\n\n    def analyze_order_book(self, order_book):\n        bid_liquidity = np.sum(order_book['bids'])\n        ask_liquidity = np.sum(order_book['asks'])\n        \n        if bid_liquidity > ask_liquidity * 1.5:\n            return "BUY_SIGNAL"\n        elif ask_liquidity > bid_liquidity * 1.5:\n            return "SELL_SIGNAL"\n        return "HOLD"` },
+            "neural_net.py": { type: 'code', content: `import torch\nimport torch.nn as nn\n\nclass Brain(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.layer1 = nn.Linear(10, 64)\n        self.layer2 = nn.Linear(64, 1)\n        \n    def forward(self, x):\n        x = torch.relu(self.layer1(x))\n        return torch.sigmoid(self.layer2(x))` },
+            "bio.md": { type: 'text', content: `# Rahul J\n\n**Strategic Engineer**\n\nI am an engineer defined by strategy. Whether dissecting market microstructure for Forex algorithms or architecting neural networks, I operate on the principle of calculated risk.\n\n## Roles\n- AI/DS Developer\n- Full-Stack Web Dev\n- Discord Bot Creator\n- Cloud Deployment Enthusiast\n\n## Stats\n- Chess Elo: 1826\n- Reviewer: AICCONS 2026` },
+            "research_notes.txt": { type: 'text', content: `Target: AICCONS 2026\nLocation: University of Wollongong (Hybrid)\nRole: Research Paper Reviewer\nTopic: Enhancing LLM Reasoning Capabilities` }
+        };
 
-//--- INPUT PARAMETERS ---
-input string   Risk_Settings = "=== RISK MANAGEMENT ===";
-input double   RiskPercent    = 2.0;       // Risk per trade (%)
-input double   MaxDrawdown    = 15.0;      // Max Daily Drawdown (%)
-input double   LotSize        = 0.1;       // Fixed Lot (if Risk=0)
-input bool     UseMartingale  = false;     // Enable Recovery Mode
-input double   MartingaleMult = 1.5;       // Recovery Multiplier
+        const apps = [
+            { name: "Terminal", type: "terminal", icon: "fa-terminal", color: "#2ea043" },
+            { name: "NeuralBot", type: "neuralchat", icon: "fa-robot", color: "#a371f7" },
+            { name: "Browser", type: "browser", icon: "fa-globe", color: "#58a6ff" },
+            { name: "My Files", type: "explorer", icon: "fa-folder", color: "#ffbd2e" },
+            { name: "SysMon", type: "sysmon", icon: "fa-chart-line", color: "#ff7b72" },
+            { name: "VS Code", type: "editor", icon: "fa-code", color: "#007acc" },
+        ];
 
-input string   Indi_Settings = "=== INDICATOR LOGIC ===";
-input int      FastEMA        = 12;        // Fast EMA Period
-input int      SlowEMA        = 26;        // Slow EMA Period
-input int      SignalSMA      = 9;         // Signal Period
-input int      RSI_Period     = 14;        // Relative Strength Index
-input int      Stoch_K        = 5;         // Stochastic K
-input int      Stoch_D        = 3;         // Stochastic D
-input int      Stoch_Slow     = 3;         // Stochastic Slowing
+        let highestZ = 100;
+        let windows = [];
 
-//--- GLOBAL VARIABLES ---
-int       MagicNumber = 133742;
-double    PipValue;
-datetime  LastTradeTime;
-bool      IsHedging = false;
+        // --- BOOT SEQUENCE ---
+        setTimeout(() => {
+            document.getElementById('boot-text').innerText = "Loading User Environment...";
+            setTimeout(() => {
+                const scr = document.getElementById('boot-screen');
+                scr.style.transition = 'opacity 0.8s';
+                scr.style.opacity = '0';
+                setTimeout(() => scr.style.display = 'none', 800);
+                initDesktop();
+            }, 1000);
+        }, 1500);
 
-//+------------------------------------------------------------------+
-//| Expert initialization function                                   |
-//+------------------------------------------------------------------+
-int OnInit()
-  {
-   if(Digits==3 || Digits==5) PipValue = Point*10;
-   else PipValue = Point;
-   
-   Print("Initialization Complete. Neural Filter: ACTIVE");
-   return(INIT_SUCCEEDED);
-  }
+        // --- DESKTOP INIT ---
+        function initDesktop() {
+            const desk = document.getElementById('desktop');
+            desk.innerHTML = '';
+            apps.forEach(app => {
+                const el = document.createElement('div');
+                el.className = 'desktop-icon';
+                el.innerHTML = `<i class="fa-solid ${app.icon}" style="color: ${app.color}"></i><span>${app.name}</span>`;
+                el.ondblclick = () => createWindow(app.name, app.type);
+                desk.appendChild(el);
+            });
 
-//+-----------------------------
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('clock-time').innerText = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                document.getElementById('clock-date').innerText = now.toLocaleDateString([], {month:'short', day:'numeric'});
+            }, 1000);
+
+            setTimeout(() => {
+                showNotification("Welcome to StratOS", "Click the <b>Browser</b> icon to see Projects, GitHub, and Discord status.", 8000);
+            }, 1500);
+        }
+
+        function toggleStartMenu() {
+            const menu = document.getElementById('start-menu');
+            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        function showNotification(title, msg, duration=5000) {
+            const area = document.getElementById('notification-area');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<div class="toast-title"><span><i class="fa-solid fa-circle-info"></i> ${title}</span><i class="fa-solid fa-xmark" style="cursor:pointer" onclick="this.parentElement.parentElement.remove()"></i></div><div class="toast-msg">${msg}</div>`;
+            area.appendChild(toast);
+            setTimeout(() => { toast.style.animation = "fadeOut 0.5s ease-out forwards"; setTimeout(() => toast.remove(), 500); }, duration);
+        }
+
+        // --- WINDOW MANAGER ---
+        function createWindow(title, type, contentKey = null) {
+            highestZ++;
+            const id = 'win-' + Date.now();
+            const count = windows.length;
+            const x = 50 + (count * 30) % 400;
+            const y = 50 + (count * 30) % 300;
+
+            const win = document.createElement('div');
+            win.className = 'window';
+            win.id = id;
+            win.style.zIndex = highestZ;
+            
+            // Smart Browser Layout - FULL SIZE IFRAME FIX
+            if (type === 'browser') { 
+                win.style.width = '95%'; 
+                win.style.height = '90%';
+                win.style.left = '2.5%';
+                win.style.top = '5%';
+            } else {
+                win.style.left = x + 'px';
+                win.style.top = y + 'px';
+            }
+            
+            // Dimensions
+            if (type === 'terminal') { win.style.width = '700px'; win.style.height = '480px'; }
+            else if (type === 'sysmon') { win.style.width = '600px'; win.style.height = '450px'; }
+            else if (type === 'inspector') { win.style.width = '850px'; win.style.height = '600px'; }
+            else if (type === 'editor') { win.style.width = '900px'; win.style.height = '600px'; }
+            else if (type === 'neuralchat') { win.style.width = '400px'; win.style.height = '600px'; }
+            else if (type !== 'browser') { win.style.width = '600px'; win.style.height = '450px'; }
+
+            let iconClass = apps.find(a => a.type === type)?.icon || 'fa-window-maximize';
+            if (type === 'explorer') iconClass = 'fa-folder-open';
+            if (type === 'editor') iconClass = 'fa-code';
+
+            win.innerHTML = `
+                <div class="window-header" onmousedown="startDrag(event, '${id}')">
+                    <div class="window-title"><i class="fa-solid ${iconClass}"></i> ${title}</div>
+                    <div class="window-controls">
+                        <div class="control-btn min-btn" onclick="toggleMin('${id}')"></div>
+                        <div class="control-btn max-btn" onclick="toggleMax('${id}')"></div>
+                        <div class="control-btn close-btn" onclick="closeWindow('${id}')"></div>
+                    </div>
+                </div>
+                <div class="window-content" id="content-${id}"></div>
+            `;
+            
+            document.body.appendChild(win);
+            windows.push({ id, title, type, icon: iconClass });
+            
+            win.addEventListener('mousedown', () => focusWindow(id));
+            renderContent(id, type, contentKey);
+            updateTaskbar();
+        }
+
+        function focusWindow(id) { highestZ++; const win = document.getElementById(id); if(win) win.style.zIndex = highestZ; updateTaskbar(); }
+        function closeWindow(id) { document.getElementById(id).remove(); windows = windows.filter(w => w.id !== id); updateTaskbar(); }
+        function toggleMin(id) { document.getElementById(id).classList.toggle('minimized'); }
+        function toggleMax(id) { document.getElementById(id).classList.toggle('maximized'); }
+
+        function startDrag(e, id) {
+            if(e.target.closest('.window-controls')) return;
+            const win = document.getElementById(id);
+            focusWindow(id);
+            let shiftX = e.clientX - win.getBoundingClientRect().left;
+            let shiftY = e.clientY - win.getBoundingClientRect().top;
+            function moveAt(pageX, pageY) { if (win.classList.contains('maximized')) return; win.style.left = pageX - shiftX + 'px'; win.style.top = pageY - shiftY + 'px'; }
+            function onMouseMove(event) { moveAt(event.pageX, event.pageY); }
+            document.addEventListener('mousemove', onMouseMove);
+            document.onmouseup = function() { document.removeEventListener('mousemove', onMouseMove); document.onmouseup = null; };
+        }
+
+        function updateTaskbar() {
+            const list = document.getElementById('task-list');
+            list.innerHTML = '';
+            windows.forEach(w => {
+                const item = document.createElement('div');
+                item.className = 'task-item';
+                const el = document.getElementById(w.id);
+                if(parseInt(el.style.zIndex) === highestZ && !el.classList.contains('minimized')) item.classList.add('active');
+                item.innerHTML = `<i class="fa-solid ${w.icon}"></i>`;
+                item.onclick = () => { if (el.classList.contains('minimized')) el.classList.remove('minimized'); focusWindow(w.id); };
+                list.appendChild(item);
+            });
+        }
+
+        // --- APP RENDERERS ---
+        function renderContent(id, type, key) {
+            const container = document.getElementById(`content-${id}`);
+            
+            if (type === 'terminal') {
+                container.innerHTML = `<div class="terminal-app"><div class="terminal-scroll" id="term-out-${id}"><div class="term-line" style="color:#58a6ff">StratOS Kernel v4.6.0</div><div class="term-line">Type 'help'.</div><br></div><div class="term-input-line"><span class="prompt-user">rahul@stratos</span><span style="color:#fff">:</span><span style="color:#58a6ff">~</span><span class="prompt-char">$</span><input type="text" class="term-input" onkeydown="handleTerm(event, this, '${id}')" autocomplete="off"></div></div>`;
+                setTimeout(() => container.querySelector('input').focus(), 100);
+            }
+            else if (type === 'browser') {
+                container.innerHTML = `
+                    <div class="browser-app">
+                        <div class="browser-bar">
+                            <div class="browser-nav" onclick="navBrowser('${id}', 'home')"><i class="fa-solid fa-house"></i></div>
+                            <div class="browser-nav" onclick="navBrowser('${id}', 'back')"><i class="fa-solid fa-arrow-left"></i></div>
+                            <div class="url-bar"><i class="fa-solid fa-lock" style="color:#2ea043; margin-right:8px;"></i> <span id="url-${id}">Portfolio Hub</span></div>
+                        </div>
+                        <div class="browser-content" id="frame-${id}"></div>
+                    </div>`;
+                navBrowser(id, 'home');
+            }
+            else if (type === 'neuralchat') {
+                container.innerHTML = `
+                    <div class="chat-app">
+                        <div class="chat-messages" id="chat-messages-${id}">
+                            <div class="chat-bubble bot">Hello! I am NeuralBot. Ask me about Rahul J's projects, or type "generate image &lt;prompt&gt;" to create art!</div>
+                        </div>
+                        <div class="chat-input-area">
+                            <input type="text" class="chat-input" placeholder="Ask something..." onkeydown="if(event.key==='Enter') handleChat('${id}')" id="chat-input-${id}">
+                            <button class="chat-btn" onclick="handleChat('${id}')"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </div>`;
+            }
+            else if (type === 'sysmon') {
+                container.innerHTML = `
+                    <div class="sysmon-app">
+                        <div class="sys-card">
+                            <div class="sys-title">Neural Processor</div>
+                            <div class="sys-graph-container"><canvas id="cpu-chart-${id}" class="sys-graph-canvas"></canvas></div>
+                            <div class="sys-stats-row"><span id="cpu-val-${id}" style="color:#58a6ff">0%</span><span class="sys-stats-label">4.20 GHz</span></div>
+                        </div>
+                        <div class="sys-card">
+                            <div class="sys-title">Memory Matrix</div>
+                            <div class="sys-graph-container"><canvas id="mem-chart-${id}" class="sys-graph-canvas"></canvas></div>
+                            <div class="sys-stats-row"><span id="mem-val-${id}" style="color:#d19a66">0%</span><span class="sys-stats-label" id="mem-abs-${id}">0 / 64 GB</span></div>
+                        </div>
+                        <div class="sys-card full-width">
+                            <div class="sys-title">Network Traffic</div>
+                            <div class="sys-stats-row" style="margin-top:10px;">
+                                <span style="font-size:14px; color:#2ea043"><i class="fa-solid fa-arrow-up"></i> 1.2 GB/s</span>
+                                <span style="font-size:14px; color:#58a6ff"><i class="fa-solid fa-arrow-down"></i> 4.5 GB/s</span>
+                            </div>
+                            <div class="bar-wrap" style="margin-top:10px;"><div class="bar-fill" style="width:100%; background:linear-gradient(90deg, #2ea043, #58a6ff); animation: pulseWidth 2s infinite;"></div></div>
+                        </div>
+                    </div>`;
+                startSysMonGraph(id);
+            }
+            else if (type === 'editor') {
+                const fileName = key || 'forex_algo.py';
+                const fileContent = (fileSystem[fileName] && fileSystem[fileName].content) ? fileSystem[fileName].content : "# Start typing...";
+                const highlighted = highlightPython(fileContent);
+                const lines = fileContent.split('\n').length;
+                let lineNums = '';
+                for(let i=1; i<=Math.max(lines, 20); i++) lineNums += i + '<br>';
+
+                container.innerHTML = `
+                    <div class="vscode-layout">
+                        <div class="vscode-activity-bar">
+                            <i class="fa-regular fa-file vscode-icon active"></i>
+                            <i class="fa-solid fa-search vscode-icon"></i>
+                            <i class="fa-solid fa-code-branch vscode-icon"></i>
+                        </div>
+                        <div class="vscode-sidebar">
+                            <div style="padding:10px; font-size:11px; text-transform:uppercase;">Explorer</div>
+                            <div class="vscode-sidebar-header"><i class="fa-solid fa-chevron-down"></i> &nbsp; RAHUL-PROJECT</div>
+                            ${Object.keys(fileSystem).map(f => {
+                                let icon = 'fa-file';
+                                if(f.endsWith('.py')) icon = 'fa-brands fa-python';
+                                if(f.endsWith('.md')) icon = 'fa-solid fa-info-circle';
+                                return `<div class="vscode-file ${f===fileName ? 'active' : ''}" onclick="switchVSCodeFile('${id}', '${f}')"><i class="${icon}"></i> ${f}</div>`
+                            }).join('')}
+                        </div>
+                        <div class="vscode-main">
+                            <div class="vscode-tabs">
+                                <div class="vscode-tab active"><i class="fa-brands fa-python" style="color:#58a6ff"></i> <span id="vscode-tab-title-${id}">${fileName}</span> &nbsp; &times;</div>
+                            </div>
+                            <div class="vscode-editor-area">
+                                <div class="vscode-gutter" id="vscode-gutter-${id}">${lineNums}</div>
+                                <div class="vscode-code" id="vscode-code-${id}" contenteditable="true" spellcheck="false" oninput="updateVSCodeGutter('${id}')">${highlighted}</div>
+                            </div>
+                            <div class="vscode-status-bar">
+                                <div><i class="fa-solid fa-code-branch"></i> main &nbsp;&nbsp; 0 errors</div>
+                                <div>Ln 1, Col 1 &nbsp;&nbsp; UTF-8 &nbsp;&nbsp; Python</div>
+                            </div>
+                        </div>
+                    </div>`;
+            }
+            else if (type === 'explorer') {
+                let html = '<div class="explorer-app"><div class="explorer-bar">/home/rahul/intelligence</div><div class="file-grid">';
+                Object.keys(fileSystem).forEach(f => {
+                    let icon = 'fa-file-lines', color = '#ccc';
+                    if (f.endsWith('.py')) { icon = 'fa-file-code'; color = '#f1e05a'; }
+                    if (f.endsWith('.md')) { icon = 'fa-file-lines'; color = '#58a6ff'; }
+                    html += `<div class="file-item" onclick="createWindow('${f}', 'editor', '${f}')"><i class="fa-solid ${icon}" style="color:${color}"></i><span>${f}</span></div>`;
+                });
+                html += '</div></div>';
+                container.innerHTML = html;
+            }
+        }
+
+        // --- VS CODE SWITCHING ---
+        function switchVSCodeFile(id, fileName) {
+            const container = document.getElementById(`content-${id}`);
+            if(!container) return;
+            const sidebarFiles = container.querySelectorAll('.vscode-file');
+            sidebarFiles.forEach(el => {
+                el.classList.remove('active');
+                if(el.innerText.trim() === fileName) el.classList.add('active');
+            });
+            document.getElementById(`vscode-tab-title-${id}`).innerText = fileName;
+            const codeArea = document.getElementById(`vscode-code-${id}`);
+            const gutter = document.getElementById(`vscode-gutter-${id}`);
+            if(fileSystem[fileName]) {
+                const content = fileSystem[fileName].content;
+                codeArea.innerHTML = highlightPython(content);
+                const lines = content.split('\n').length;
+                let lineNums = '';
+                for(let i=1; i<=Math.max(lines, 20); i++) lineNums += i + '<br>';
+                gutter.innerHTML = lineNums;
+            }
+        }
+
+        function updateVSCodeGutter(id) {
+            const codeArea = document.getElementById(`vscode-code-${id}`);
+            const gutter = document.getElementById(`vscode-gutter-${id}`);
+            if(!codeArea || !gutter) return;
+            const lines = codeArea.innerText.split('\n').length;
+            let lineNums = '';
+            for(let i=1; i<=Math.max(lines, 20); i++) lineNums += i + '<br>';
+            gutter.innerHTML = lineNums;
+        }
+
+        // --- NEURAL CHAT ---
+        async function handleChat(id) {
+            const input = document.getElementById(`chat-input-${id}`);
+            const msgArea = document.getElementById(`chat-messages-${id}`);
+            const text = input.value.trim();
+            if(!text) return;
+
+            msgArea.innerHTML += `<div class="chat-bubble user">${text}</div>`;
+            input.value = '';
+            msgArea.scrollTop = msgArea.scrollHeight;
+
+            // Check for image generation command
+            if (text.toLowerCase().startsWith('generate image') || text.toLowerCase().startsWith('gen image')) {
+                const prompt = text.replace(/^(generate|gen) image/i, '').trim();
+                await generateImage(prompt, `chat-messages-${id}`);
+                return;
+            }
+
+            let apiKey = MISTRAL_API_KEY; 
+            const systemPrompt = `You are NeuralBot, an AI assistant for Rahul J's portfolio.
+            Knowledge Base:
+            - Name: Rahul J
+            - Role: System Architect / AI Engineer
+            - Education: 2nd Year CMRIT Bangalore, AI & DS.
+            - Bio: Engineer defined by strategy. Focus on market microstructure, Forex algos, and neural networks. Calculated risk taker.
+            - Chess Elo: 1826.
+            - Reviewer: AICCONS 2026.
+            Constraint: Keep answers concise and professional.`;
+
+            try {
+                const res = await fetch('https://api.mistral.ai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+                    body: JSON.stringify({
+                        model: "mistral-medium",
+                        messages: [{ role: "system", content: systemPrompt }, { role: "user", content: text }]
+                    })
+                });
+                const data = await res.json();
+                msgArea.innerHTML += `<div class="chat-bubble bot">${data.choices[0].message.content}</div>`;
+                msgArea.scrollTop = msgArea.scrollHeight;
+            } catch (e) {
+                msgArea.innerHTML += `<div class="chat-bubble bot" style="color:#ff7b72">Error: AI connection failed.</div>`;
+            }
+        }
+
+        async function generateImage(prompt, msgAreaId) {
+            const msgArea = document.getElementById(msgAreaId);
+            const bubble = document.createElement('div');
+            bubble.className = "chat-bubble bot";
+            bubble.innerHTML = `Generating visual artifact: <b>${prompt}</b>... <i class="fa-solid fa-circle-notch fa-spin"></i>`;
+            msgArea.appendChild(bubble);
+            msgArea.scrollTop = msgArea.scrollHeight;
+
+            const seed = Math.floor(Math.random() * 1000000);
+            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=512&seed=${seed}&nologo=true`;
+
+            // Wait briefly to simulate processing
+            await new Promise(r => setTimeout(r, 1500));
+
+            bubble.innerHTML = `Visual Generated: <b>${prompt}</b><br><img src="${url}" class="chat-image" onclick="openImageModal('${url}')">`;
+            msgArea.scrollTop = msgArea.scrollHeight;
+        }
+
+        // --- BROWSER LOGIC ---
+        function navBrowser(id, url) {
+            const frame = document.getElementById(`frame-${id}`);
+            const urlSpan = document.getElementById(`url-${id}`);
+            
+            if (url === 'home') {
+                frame.innerHTML = `
+                    <div class="browser-home">
+                        <div style="text-align:center">
+                            <i class="fa-solid fa-earth-americas" style="font-size:60px; color:#58a6ff; margin-bottom:20px;"></i>
+                            <div class="browser-title" style="font-size:24px; font-weight:bold;">Intelligence Hub</div>
+                        </div>
+                        <div class="dial-grid">
+                            <div class="dial-item" onclick="navBrowser('${id}', 'tools-hub')"><div class="dial-icon">🛠️</div><div class="dial-label">Tools</div></div>
+                            <div class="dial-item" onclick="loadChess('${id}')"><div class="dial-icon" style="color:#2ecc71"><i class="fa-solid fa-chess-knight"></i></div><div class="dial-label">Chess Stats</div></div>
+                            <div class="dial-item" onclick="loadGithub('${id}')"><div class="dial-icon" style="color:#fff"><i class="fa-brands fa-github"></i></div><div class="dial-label">GitHub</div></div>
+                            <div class="dial-item" onclick="loadDiscord('${id}')"><div class="dial-icon" style="color:#5865F2"><i class="fa-brands fa-discord"></i></div><div class="dial-label">Discord</div></div>
+                        </div>
+                    </div>`;
+                urlSpan.innerText = "New Tab";
+            } 
+            else if (url === 'back') {
+                // Smart Back Logic
+                const current = urlSpan.innerText;
+                if (current.includes('vyapari.space')) {
+                    navBrowser(id, 'tools-hub');
+                } else if (current === 'Tools Hub') {
+                    navBrowser(id, 'home');
+                } else {
+                    navBrowser(id, 'home');
+                }
+            }
+            else if (url === 'tools-hub') {
+                frame.innerHTML = `
+                    <div class="tools-hub-container">
+                        <div class="tools-header">Select a Toolset</div>
+                        <div class="tool-cards">
+                            <div class="tool-card" onclick="navBrowser('${id}', 'https://www.vyapari.space/aitools/')">
+                                <div class="tool-bg"></div>
+                                <div class="tool-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                                <div class="tool-name">AI Suite</div>
+                                <div class="tool-desc">Access advanced AI utilities</div>
+                            </div>
+                            <div class="tool-card" onclick="navBrowser('${id}', 'https://www.vyapari.space/tools/')">
+                                <div class="tool-bg" style="background: linear-gradient(45deg, #ff7b72, #ffbd2e);"></div>
+                                <div class="tool-icon"><i class="fa-solid fa-toolbox"></i></div>
+                                <div class="tool-name">General Utilities</div>
+                                <div class="tool-desc">Everyday developer tools</div>
+                            </div>
+                            <div class="tool-card" onclick="navBrowser('${id}', 'https://www.vyapari.space/coder/')">
+                                <div class="tool-bg" style="background: linear-gradient(45deg, #2ea043, #58a6ff);"></div>
+                                <div class="tool-icon"><i class="fa-solid fa-laptop-code"></i></div>
+                                <div class="tool-name">Coder Space</div>
+                                <div class="tool-desc">IDE & Coding Tools</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                urlSpan.innerText = "Tools Hub";
+            }
+            else {
+                frame.innerHTML = `<iframe src="${url}" allow="camera; microphone; fullscreen; display-capture; geolocation" style="width:100%; height:100%; border:none; display:block;"></iframe>`;
+                urlSpan.innerText = url;
+            }
+        }
+
+        // --- LOADERS ---
+        async function loadChess(id) {
+            const frame = document.getElementById(`frame-${id}`);
+            document.getElementById(`url-${id}`).innerText = "chess.com/member/MysteriousThoughts";
+            frame.innerHTML = `<div style="padding:20px; color:white;">Loading Chess Data...</div>`;
+            
+            try {
+                const profileRes = await fetch('https://api.chess.com/pub/player/MysteriousThoughts');
+                const profile = await profileRes.json();
+                const statsRes = await fetch('https://api.chess.com/pub/player/MysteriousThoughts/stats');
+                const stats = await statsRes.json();
+
+                const avatar = profile.avatar || 'https://images.chesscomfiles.com/uploads/v1/user/null.png';
+                const rapidElo = stats.chess_rapid?.last?.rating || 'N/A';
+                const rapidPeak = stats.chess_rapid?.best?.rating || 'N/A';
+                const blitzElo = stats.chess_blitz?.last?.rating || 'N/A';
+                const blitzPeak = stats.chess_blitz?.best?.rating || 'N/A';
+                
+                frame.innerHTML = `
+                    <div style="width:100%; height:100%; background:#0d1117; display:flex; justify-content:center; align-items:center;">
+                        <div class="chess-card">
+                            <div style="display:flex; align-items:center; gap:15px; width:100%;">
+                                <img src="${avatar}" class="chess-avatar">
+                                <div>
+                                    <div style="font-size:20px; font-weight:bold; color:#fff">${profile.username}</div>
+                                    <div style="color:#8b949e; font-size:12px;">Grandmaster Strategy</div>
+                                </div>
+                            </div>
+                            <div class="chess-stats-grid">
+                                <div class="stat-box">
+                                    <div class="stat-label">Rapid</div>
+                                    <div class="stat-val" style="color:#ffce47">${rapidElo}</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">Peak</div>
+                                    <div class="stat-val">${rapidPeak}</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">Blitz</div>
+                                    <div class="stat-val" style="color:#ff7b72">${blitzElo}</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">Peak</div>
+                                    <div class="stat-val">${blitzPeak}</div>
+                                </div>
+                            </div>
+                            <div class="chess-quote">"The best move is the one that restricts your opponent."</div>
+                        </div>
+                    </div>`;
+            } catch(e) {
+                frame.innerHTML = `<div style="padding:20px; color:#ff7b72">Failed to load Chess stats.</div>`;
+            }
+        }
+
+        async function loadGithub(id) {
+            const frame = document.getElementById(`frame-${id}`);
+            document.getElementById(`url-${id}`).innerText = "github.com/SolvyrEryx";
+            
+            // Check cache
+            const cacheKey = 'neural_gh_cache_solvyr';
+            const cached = localStorage.getItem(cacheKey);
+            let data = null;
+
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (Date.now() - parsed.timestamp < 3600000) data = parsed.data;
+            }
+
+            if (!data) {
+                frame.innerHTML = `<div style="padding:20px; color:white;">Loading GitHub Data...</div>`;
+                try {
+                    const userRes = await fetch('https://api.github.com/users/SolvyrEryx');
+                    const user = await userRes.json();
+                    const reposRes = await fetch('https://api.github.com/users/SolvyrEryx/repos?sort=updated&per_page=100');
+                    const repos = await reposRes.json();
+                    data = { user, repos };
+                    localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data }));
+                } catch (e) {
+                    frame.innerHTML = `<div style="padding:20px; color:#ff7b72;">Failed to load GitHub data.</div>`;
+                    return;
+                }
+            }
+
+            const { user, repos } = data;
+            const repoHtml = Array.isArray(repos) ? repos.map(r => {
+                const langColor = { Python:'#3572A5', JavaScript:'#f1e05a', HTML:'#e34c26', CSS:'#563d7c', TypeScript:'#2b7489' }[r.language] || '#ccc';
+                return `
+                <div class="card">
+                    <div class="card-left">
+                        <div class="card-title">
+                            <i class="fa-solid fa-book-bookmark" style="color:#8b949e;"></i> 
+                            <span style="margin-left:5px">${r.name}</span>
+                        </div>
+                        <div class="card-desc">${r.description || 'No description provided.'}</div>
+                        <div class="card-meta">
+                            <span><span class="lang-dot" style="background:${langColor}"></span>${r.language || 'Text'}</span>
+                            <span><i class="fa-regular fa-star"></i> ${r.stargazers_count}</span>
+                            <span><i class="fa-solid fa-code-fork"></i> ${r.forks_count}</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <a href="${r.html_url}" target="_blank" class="repo-btn"><i class="fa-brands fa-github"></i> GitHub</a>
+                    </div>
+                </div>`;
+            }).join('') : '<div style="padding:20px">No repositories found.</div>';
+
+            frame.innerHTML = `
+                <div class="social-feed">
+                    <div class="github-layout">
+                        <div class="github-sidebar">
+                            <img src="${user.avatar_url}" class="profile-img">
+                            <div class="profile-name">${user.name || user.login}</div>
+                            <div class="profile-login">${user.login}</div>
+                            <div class="profile-bio" style="color:#aaa; margin-bottom:15px; font-size:13px;">${user.bio || 'System Architect'}</div>
+                            <div class="profile-stats" style="color:#ccc; font-size:13px;"><i class="fa-solid fa-users"></i> <b>${user.followers}</b> followers · <b>${user.following}</b> following</div>
+                        </div>
+                        <div class="github-main">
+                            <div class="repo-grid">${repoHtml}</div>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        async function loadDiscord(id) {
+            const frame = document.getElementById(`frame-${id}`);
+            document.getElementById(`url-${id}`).innerText = "discord.com/users/" + DISCORD_ID;
+            frame.innerHTML = `<div style="padding:20px; color:white;">Connecting to Lanyard...</div>`;
+
+            try {
+                const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
+                const json = await res.json();
+                const d = json.data;
+                const user = d.discord_user;
+                const avatar = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=256`;
+                const bannerStyle = d.discord_user.banner ? `background-image: url('https://cdn.discordapp.com/banners/${user.id}/${user.banner}.png?size=512');` : `background-color: ${d.kv?.accent_color || '#18191c'}`;
+                const statusColor = { online:'#23a559', idle:'#f0b232', dnd:'#f23f43', offline:'#80848e' }[d.discord_status];
+
+                frame.innerHTML = `
+                    <div class="discord-container">
+                        <div class="discord-modal">
+                            <div class="discord-banner" style="${bannerStyle}"></div>
+                            <div class="discord-avatar-wrapper">
+                                <img src="${avatar}" class="discord-avatar">
+                                <div class="discord-status-dot" style="background-color:${statusColor}"></div>
+                            </div>
+                            <div class="discord-badges">
+                                <div class="discord-badge" title="Developer"><i class="fa-solid fa-code" style="color:#fff"></i></div>
+                            </div>
+                            <div class="discord-body">
+                                <div class="discord-username">${user.global_name || user.username}</div>
+                                <div class="discord-handle">${user.username}</div>
+                                <div class="discord-section-title">Bio</div>
+                                <div class="discord-bio">Engineer defined by strategy. Calculated risk.</div>
+                                ${d.activities.length > 0 ? `
+                                <div class="discord-section-title">Activity</div>
+                                <div class="discord-activity-card">
+                                    <div>
+                                        <div style="font-weight:bold; font-size:14px; color:#fff">${d.activities[0].name}</div>
+                                        <div style="font-size:13px; color:#b9bbbe">${d.activities[0].state || ''}</div>
+                                    </div>
+                                </div>` : ''}
+                            </div>
+                        </div>
+                    </div>`;
+            } catch (e) {
+                frame.innerHTML = `<div style="padding:20px; color:#ff7b72;">Failed to fetch Discord status.</div>`;
+            }
+        }
+
+        // --- TERMINAL HANDLER ---
+        function handleTerm(e, input, id) {
+            if(e.key === 'Enter') {
+                const cmd = input.value;
+                const out = document.getElementById(`term-out-${id}`);
+                const line = document.createElement('div');
+                line.className = 'term-line';
+                line.innerHTML = `<span class="prompt-user">rahul@stratos</span>:~$ ${cmd}`;
+                out.appendChild(line);
+                
+                const lower = cmd.toLowerCase().trim();
+                const print = (t, c='#ccc') => { const d=document.createElement('div'); d.className='term-line'; d.style.color=c; d.innerHTML=t; out.appendChild(d); }
+                
+                if(lower === 'help') print("Commands: ls, github, discord, clear, reboot, whoami", "#58a6ff");
+                else if(lower === 'ls') print("forex_algo.py  neural_net.py  bio.md  research_notes.txt", "#f1e05a");
+                else if(lower === 'whoami') {
+                    print("Rahul J | System Architect", "#58a6ff");
+                    print("Strategic Engineer @ CMRIT", "#ccc");
+                    print("Status: AICCONS 2026 Reviewer", "#ff7b72");
+                }
+                else if(lower === 'clear') out.innerHTML = '';
+                else if(lower === 'reboot') location.reload();
+                else print("Command not found.", "#ff7b72");
+                
+                input.value = '';
+                out.scrollTop = out.scrollHeight;
+            }
+        }
+
+        // --- HELPER ---
+        function highlightPython(code) {
+            return code.replace(/(import|class|def|return|if|elif|else)/g, '<span class="token-keyword">$1</span>')
+                       .replace(/('.*?')/g, '<span class="token-string">$1</span>');
+        }
+        function startSysMonGraph(id) {
+            // Simplified graph starter - draws a random line
+            const cpuCanvas = document.getElementById(`cpu-chart-${id}`);
+            const memCanvas = document.getElementById(`mem-chart-${id}`);
+            if(!cpuCanvas || !memCanvas) return;
+
+            const drawLine = (canvas, color) => {
+                const ctx = canvas.getContext('2d');
+                const w = canvas.parentElement.clientWidth;
+                const h = canvas.parentElement.clientHeight;
+                canvas.width = w;
+                canvas.height = h;
+
+                const data = new Array(50).fill(0).map(() => Math.random() * h * 0.5 + h * 0.25);
+                
+                let i = 0;
+                setInterval(() => {
+                    data.shift();
+                    data.push(Math.random() * h * 0.5 + h * 0.25);
+                    ctx.clearRect(0, 0, w, h);
+                    ctx.beginPath();
+                    ctx.moveTo(0, data[0]);
+                    for(let j=1; j<data.length; j++) ctx.lineTo((w/50)*j, data[j]);
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }, 100);
+            };
+
+            drawLine(cpuCanvas, '#58a6ff');
+            drawLine(memCanvas, '#d19a66');
+        }
+    </script>
+</body>
+</html>
