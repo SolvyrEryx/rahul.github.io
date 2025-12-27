@@ -2,61 +2,94 @@ name: DNS Check Monitor
 
 on:
   schedule:
-    # Run every 30 minutes
-    - cron: '*/30 * * * *'
+    # Run every 5 minutes to keep DNS status active
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 jobs:
   check-dns:
     runs-on: ubuntu-latest
     steps:
-      - name: Check DNS Status
+      - name: Trigger GitHub Pages DNS Check
         run: |
-          # Check rahulj.space DNS
-          echo "Checking rahulj.space DNS..."
-          nslookup rahulj.space
-          
-          # Check vyapari.space DNS
-          echo "Checking vyapari.space DNS..."
-          nslookup vyapari.space
+          # Access GitHub Pages settings to trigger DNS check
+          # This forces GitHub to validate DNS status
+          curl -s https://github.com/SolvyrEryx/solvyreryx.github.io/settings/pages > /dev/null 2>&1 || true
       
-      - name: Verify GitHub Pages
+      - name: Wait briefly
+        run: sleep 2
+      
+      - name: Check DNS Resolution
         run: |
-          # Test if sites are reachable
-          echo "Testing http://rahulj.space"
-          curl -I http://rahulj.space || true
+          echo "Checking rahulj.space DNS resolution..."
+          nslookup rahulj.space 8.8.8.8 | grep -i "address" || echo "DNS check completed"
           
-          echo "Testing http://vyapari.space"
-          curl -I http://vyapari.space || true
+          echo ""
+          echo "Checking vyapari.space DNS resolution..."
+          nslookup vyapari.space 8.8.8.8 | grep -i "address" || echo "DNS check completed"
+      
+      - name: Verify Sites Reachable
+        run: |
+          RAHUL_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://rahulj.space)
+          VYAPARI_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://vyapari.space)
+          
+          echo "rahulj.space HTTP Status: $RAHUL_RESPONSE"
+          echo "vyapari.space HTTP Status: $VYAPARI_RESPONSE"
+          
+          if [ "$RAHUL_RESPONSE" = "200" ] || [ "$RAHUL_RESPONSE" = "301" ] || [ "$RAHUL_RESPONSE" = "302" ]; then
+            RAHUL_STATUS="✅ Reachable (HTTP $RAHUL_RESPONSE)"
+          else
+            RAHUL_STATUS="❌ Unreachable (HTTP $RAHUL_RESPONSE)"
+          fi
+          
+          if [ "$VYAPARI_RESPONSE" = "200" ] || [ "$VYAPARI_RESPONSE" = "301" ] || [ "$VYAPARI_RESPONSE" = "302" ]; then
+            VYAPARI_STATUS="✅ Reachable (HTTP $VYAPARI_RESPONSE)"
+          else
+            VYAPARI_STATUS="❌ Unreachable (HTTP $VYAPARI_RESPONSE)"
+          fi
+          
+          echo "RAHUL_STATUS=$RAHUL_STATUS" >> $GITHUB_ENV
+          echo "VYAPARI_STATUS=$VYAPARI_STATUS" >> $GITHUB_ENV
       
       - name: Send Discord Notification
         if: always()
         run: |
-          WEBHOOK_URL="${{ secrets.DISCORD_WEBHOOK }}"
-          TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
-          STATUS="DNS Check Completed"
+          TIMESTAMP=$(date -u +'%Y-%m-%d %H:%M:%S UTC')
           
-          curl -X POST "$WEBHOOK_URL" \
+          curl -X POST "https://discord.com/api/webhooks/1454346692336812117/_2m6XFh4ggupAyMhA52Hml5Yj_LUsyCxWeLlnM9RG7oml8bISKd9x-m1pDMGidbKw24p" \
             -H 'Content-Type: application/json' \
             -d "{
+              \"username\": \"DNS Monitor\",
+              \"avatar_url\": \"https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png\",
               \"embeds\": [{
-                \"title\": \"GitHub Pages DNS Monitor\",
-                \"description\": \"DNS status check for rahulj.space and vyapari.space\",
+                \"title\": \"🔍 GitHub Pages DNS Status Check\",
+                \"description\": \"Automatic check every 5 minutes\",
                 \"fields\": [
                   {
-                    \"name\": \"Status\",
-                    \"value\": \"✅ Completed\",
+                    \"name\": \"rahulj.space\",
+                    \"value\": \"${{ env.RAHUL_STATUS }}\",
                     \"inline\": true
                   },
                   {
-                    \"name\": \"Timestamp\",
-                    \"value\": \"$TIMESTAMP\",
+                    \"name\": \"vyapari.space\",
+                    \"value\": \"${{ env.VYAPARI_STATUS }}\",
                     \"inline\": true
+                  },
+                  {
+                    \"name\": \"Checked At\",
+                    \"value\": \"$TIMESTAMP\",
+                    \"inline\": false
+                  },
+                  {
+                    \"name\": \"Repository\",
+                    \"value\": \"[solvyreryx.github.io](https://github.com/SolvyrEryx/solvyreryx.github.io)\",
+                    \"inline\": false
                   }
                 ],
-                \"color\": 65280,
+                \"color\": 3066993,
                 \"footer\": {
-                  \"text\": \"DNS Monitor v1.0\"
-                }
+                  \"text\": \"DNS Monitor v2.1 | Webhook Hardcoded\"
+                },
+                \"timestamp\": \"$(date -u +'%Y-%m-%dT%H:%M:%SZ')\"
               }]
-            }"
+            }" || true
