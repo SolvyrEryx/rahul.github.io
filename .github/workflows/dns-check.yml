@@ -1,0 +1,62 @@
+name: DNS Check Monitor
+
+on:
+  schedule:
+    # Run every 30 minutes
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  check-dns:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check DNS Status
+        run: |
+          # Check rahulj.space DNS
+          echo "Checking rahulj.space DNS..."
+          nslookup rahulj.space
+          
+          # Check vyapari.space DNS
+          echo "Checking vyapari.space DNS..."
+          nslookup vyapari.space
+      
+      - name: Verify GitHub Pages
+        run: |
+          # Test if sites are reachable
+          echo "Testing http://rahulj.space"
+          curl -I http://rahulj.space || true
+          
+          echo "Testing http://vyapari.space"
+          curl -I http://vyapari.space || true
+      
+      - name: Send Discord Notification
+        if: always()
+        run: |
+          WEBHOOK_URL="${{ secrets.DISCORD_WEBHOOK }}"
+          TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          STATUS="DNS Check Completed"
+          
+          curl -X POST "$WEBHOOK_URL" \
+            -H 'Content-Type: application/json' \
+            -d "{
+              \"embeds\": [{
+                \"title\": \"GitHub Pages DNS Monitor\",
+                \"description\": \"DNS status check for rahulj.space and vyapari.space\",
+                \"fields\": [
+                  {
+                    \"name\": \"Status\",
+                    \"value\": \"✅ Completed\",
+                    \"inline\": true
+                  },
+                  {
+                    \"name\": \"Timestamp\",
+                    \"value\": \"$TIMESTAMP\",
+                    \"inline\": true
+                  }
+                ],
+                \"color\": 65280,
+                \"footer\": {
+                  \"text\": \"DNS Monitor v1.0\"
+                }
+              }]
+            }"
